@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Koulen&display=swap');
+
+.pane {
+    -fx-background-color:  #d3d3d3;
+}
+
+.login-title {
+    -fx-text-fill: #385822;
+    -fx-font-weight: bold;
+    -fx-font-family: "Koulen", cursive;
+}
+
+.removeheader .column-header-background{
+    -fx-max-height: 0;
+    -fx-pref-height: 0;
+    -fx-min-height: 0;
+}
