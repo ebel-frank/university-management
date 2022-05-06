@@ -4,21 +4,27 @@ public class SupervisorGradesModel {
     private int id;
     private String firstname;
     private String lastname;
-    private String examGrade;
-    private String tpGrade;
-    private String ccGrade;
-    private String totalGrade;
+    private int exam;
+    private int tp;
+    private int cc;
+    private int examCoeff;
+    private int tpCoeff;
+    private int ccCoeff;
+    private String total;
     private String situation;
 
-    public SupervisorGradesModel(int id, String firstname, String lastname, double examGrade, double tpGrade, double ccGrade,
-                                 double total) {
+    public SupervisorGradesModel(int id, String firstname, String lastname, int exam,
+                                 int tp, int cc, int examCoeff, int tpCoeff, int ccCoeff, double total) {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
-        this.examGrade = examGrade+"";
-        this.tpGrade = tpGrade+"";
-        this.ccGrade = ccGrade+"";
-        this.totalGrade = total+"";
+        this.exam = exam;
+        this.tp = tp;
+        this.cc = cc;
+        this.examCoeff = examCoeff;
+        this.tpCoeff = tpCoeff;
+        this.ccCoeff = ccCoeff;
+        this.total = total+"";
         if (total>=10) {
             this.situation = "R";
         } else {
@@ -26,15 +32,10 @@ public class SupervisorGradesModel {
         }
     }
 
-    public SupervisorGradesModel(String firstname) {
-        this.id = -1;
+    public SupervisorGradesModel(String firstname, String lastname, double total) {
         this.firstname = firstname;
-        this.lastname = "";
-        this.examGrade = "";
-        this.tpGrade = "";
-        this.ccGrade = "";
-        this.totalGrade = "";
-        this.situation = "";
+        this.lastname = lastname;
+        this.total = total+"";
     }
 
     public int getId() {
@@ -61,36 +62,36 @@ public class SupervisorGradesModel {
         this.lastname = lastname;
     }
 
-    public String getExamGrade() {
-        return examGrade;
+    public int getExam() {
+        return exam;
     }
 
-    public void setExamGrade(String examGrade) {
-        this.examGrade = examGrade;
+    public void setExam(int exam) {
+        this.exam = exam;
     }
 
-    public String getTpGrade() {
-        return tpGrade;
+    public int getTp() {
+        return tp;
     }
 
-    public void setTpGrade(String tpGrade) {
-        this.tpGrade = tpGrade;
+    public void setTp(int tp) {
+        this.tp = tp;
     }
 
-    public String getCcGrade() {
-        return ccGrade;
+    public int getCc() {
+        return cc;
     }
 
-    public void setCcGrade(String ccGrade) {
-        this.ccGrade = ccGrade;
+    public void setCc(int cc) {
+        this.cc = cc;
     }
 
-    public String getTotalGrade() {
-        return totalGrade;
+    public String getTotal() {
+        return total;
     }
 
-    public void setTotalGrade(String totalGrade) {
-        this.totalGrade = totalGrade;
+    public void setTotal() {
+        this.total = ""+((exam * examCoeff * 0.01) + (tp * tpCoeff * 0.01) + (cc * ccCoeff * 0.01));
     }
 
     public String getSituation() {
@@ -100,5 +101,4 @@ public class SupervisorGradesModel {
     public void setSituation(String situation) {
         this.situation = situation;
     }
-
 }

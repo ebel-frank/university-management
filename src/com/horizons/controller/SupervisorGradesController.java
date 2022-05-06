@@ -3,9 +3,15 @@ package com.horizons.controller;
 import com.horizons.ViewFactory;
 import com.horizons.database.AppDatabase;
 import com.horizons.model.SupervisorGradesModel;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.Pane;
+import javafx.scene.shape.Line;
+import javafx.util.converter.IntegerStringConverter;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -16,28 +22,30 @@ import static com.horizons.Utils.*;
 public class SupervisorGradesController extends BaseController {
 
     private final Connection connection;
-    private int id;
-
-    private TreeItem<SupervisorGradesModel> root;
 
     @FXML
-    private Button edit, update;
+    private ChoiceBox<String> year, specialty, semester, courses, course;
 
     @FXML
-    private TextField fullName, examGrade, tpGrade, ccGrade;
+    private TableView<SupervisorGradesModel> coursesTableView;
 
     @FXML
-    private Tab courses, semester;
+    private TableColumn<?, Void> serialNo;
 
     @FXML
-    private TabPane gradesTabPane;
+    private TableColumn<SupervisorGradesModel, String> columnFirstName, columnLastName, columnTotal, columnSituation;
 
     @FXML
-    private TreeTableView<SupervisorGradesModel> tableView;
+    private TableColumn<SupervisorGradesModel, Integer> columnExam, columnTp, columnCc;
 
     @FXML
-    private TreeTableColumn<SupervisorGradesModel, String> columnFirstName, columnLastName, columnExam, columnTp, columnCc, columnTotal, columnSituation;
+    private Line divider;
 
+    @FXML
+    private Label resultTitle, back;
+
+    @FXML
+    private Pane resultOptions;
 
     public SupervisorGradesController(ViewFactory viewFactory, String fxmlName) {
         super(viewFactory, fxmlName);
@@ -46,204 +54,187 @@ public class SupervisorGradesController extends BaseController {
 
     @FXML
     void initialize() {
-        gradesTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
-            if (oldTab != null) {
-                oldTab.setContent(null);
+        year.getItems().addAll("1", "2");
+        year.setOnAction(event -> {
+            semester.getItems().clear();
+            specialty.getItems().clear();
+            if (year.getValue().equals("1")) {
+                semester.getItems().addAll("Semester 1", "Semester 2");
+                specialty.getItems().add("TC");
+                semester.setValue("Semester 1");
+                specialty.setValue("TC");
+                return;
             }
-            if (newTab != null) {
-                try {
-                    switch (gradesTabPane.getSelectionModel().getSelectedIndex()) {
-                        case 0 -> {
-                            getSubjects();
-                            getGrades();
-                            columnExam.setText("Exam Grade");
-                            columnTp.setText("TP Grade");
-                            columnCc.setText("CC Grade");
-                            examGrade.setDisable(false);
-                            tpGrade.setDisable(false);
-                            ccGrade.setDisable(false);
-                            edit.setDisable(false);
-                            update.setDisable(false);
-                        }
-                        case 1 -> {
-                            getSemesters();
-                            getModules();
-                            columnExam.setText("Module 1");
-                            columnTp.setText("Module 2");
-                            columnCc.setText("Module 3");
-                            examGrade.setDisable(true);
-                            tpGrade.setDisable(true);
-                            ccGrade.setDisable(true);
-                            edit.setDisable(true);
-                            update.setDisable(true);
-                        }
-                    }
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+            semester.getItems().addAll("Semester 3", "Semester 4");
+            specialty.getItems().addAll("SIC", "GE", "GME");
+            semester.setValue("Semester 3");
+            specialty.setValue("SIC");
+        });
 
-                newTab.setContent(tableView);
+        semester.setOnAction(event -> {
+            if (specialty.getValue() != null && semester.getValue() != null) {
+                getCourses(Integer.parseInt(semester.getValue().charAt(9)+""), specialty.getValue());
             }
         });
-        columnFirstName.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getValue().getFirstname()));
-        columnLastName.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getValue().getLastname()));
-        columnExam.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getValue().getExamGrade()));
-        columnTp.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getValue().getTpGrade()));
-        columnCc.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getValue().getCcGrade()));
-        columnTotal.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getValue().getTotalGrade()));
-        columnSituation.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getValue().getSituation()));
 
-        root = new TreeItem<>(new SupervisorGradesModel("root"));
-        try {
-            getSubjects();
-            getGrades();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        specialty.setOnAction(event -> {
 
-        tableView.setRoot(root);
-        tableView.setShowRoot(false);
-    }
-
-    private void getSubjects() throws SQLException {
-        root.getChildren().clear();
-        String queryText = "SELECT subject FROM subject";
-        ResultSet response = getResponse(connection, queryText);
-        while (response.next()) {
-            root.getChildren().add(new TreeItem<>(new SupervisorGradesModel(response.getString("subject"))));
-        }
-    }
-
-    private void getSemesters() throws SQLException {
-        root.getChildren().clear();
-        for (int i=1; i <= 4; i++) {
-            root.getChildren().add(new TreeItem<>(new SupervisorGradesModel("Semester "+i)));
-        }
-    }
-
-    private void getGrades() throws SQLException {
-        String queryText = "SELECT grades.id, student.firstname, student.lastname, exam, tp, cc, examCoeff, tpCoeff, ccCoeff, (exam * examCoeff * 0.01) + (tp * tpCoeff * 0.01) + (cc * ccCoeff * 0.01) as total, subject.id " +
-                "FROM grades INNER JOIN student ON student.id = grades.student_id INNER JOIN courses ON courses.id = grades.courses_id " +
-                "INNER JOIN subject ON subject.id = courses.subject_id INNER JOIN professor ON professor.subject_id = subject.id";
-        ResultSet results = getResponse(connection, queryText);
-        while (results.next()){
-            SupervisorGradesModel supervisorGradesModel = new SupervisorGradesModel(
-                    results.getInt("id"), results.getString("firstname"), results.getString("lastname"),
-                    results.getInt("exam"), results.getInt("tp"),results.getInt("cc"),
-                    results.getInt("total"));
-            root.getChildren().get(results.getInt("subject.id")-1).getChildren().add(new TreeItem<>(supervisorGradesModel));
-        }
-    }
-
-    private void getModules() throws SQLException {
-        String queryText = "SELECT firstname, lastname, " +
-                "module1, module2, module3, round((module1+module2+module3)/3, 2) as total " +
-                "FROM " +
-                "(SELECT " +
-                "student.firstname, " +
-                "student.lastname, " +
-                "student_id, " +
-                "SUM((exam * examCoeff * 0.01) + (tp * tpCoeff * 0.01) + (cc * ccCoeff * 0.01)) / COUNT(DISTINCT subject) AS module1 " +
-                "FROM " +
-                "grades " +
-                "INNER JOIN " +
-                "student ON student.id = grades.student_id " +
-                "INNER JOIN " +
-                "courses ON courses.id = grades.courses_id " +
-                "INNER JOIN " +
-                "subject ON subject.id = courses.subject_id " +
-                "INNER JOIN " +
-                "professor ON professor.subject_id = subject.id " +
-                "WHERE " +
-                "semester = %1$d AND module = 1 " +
-                "GROUP BY student_id ) t1 " +
-                "left join (SELECT " +
-                "student_id, " +
-                "SUM((exam * examCoeff * 0.01) + (tp * tpCoeff * 0.01) + (cc * ccCoeff * 0.01)) / COUNT(DISTINCT subject) AS module2 " +
-                "FROM " +
-                "grades " +
-                "INNER JOIN " +
-                "student ON student.id = grades.student_id " +
-                "INNER JOIN " +
-                "courses ON courses.id = grades.courses_id " +
-                "INNER JOIN " +
-                "subject ON subject.id = courses.subject_id " +
-                "INNER JOIN " +
-                "professor ON professor.subject_id = subject.id " +
-                "WHERE " +
-                "semester = %1$d AND module = 2 " +
-                "GROUP BY student_id) t2 on t1.student_id = t2.student_id " +
-                "left join (SELECT " +
-                "student_id, " +
-                "SUM((exam * examCoeff * 0.01) + (tp * tpCoeff * 0.01) + (cc * ccCoeff * 0.01)) / COUNT(DISTINCT subject) AS module3 " +
-                "FROM " +
-                "grades " +
-                "INNER JOIN " +
-                "student ON student.id = grades.student_id " +
-                "INNER JOIN " +
-                "courses ON courses.id = grades.courses_id " +
-                "INNER JOIN " +
-                "subject ON subject.id = courses.subject_id " +
-                "INNER JOIN " +
-                "professor ON professor.subject_id = subject.id " +
-                "WHERE " +
-                "semester = %1$d AND module = 3 " +
-                "GROUP BY student_id) t3 on t3.student_id = t1.student_id";
-        for (int i=1; i<=4; i++) {
-            ResultSet results = getResponse(connection, String.format(queryText, i));
-            while (results.next()) {
-                SupervisorGradesModel supervisorGradesModel = new SupervisorGradesModel(
-                        -1, results.getString("firstname"), results.getString("lastname"),
-                        results.getDouble("module1"), results.getDouble("module2"),
-                        results.getDouble("module3"), results.getDouble("total"));
-                root.getChildren().get(i-1).getChildren().add(new TreeItem<>(supervisorGradesModel));
+            if (specialty.getValue() != null && semester.getValue() != null) {
+                getCourses(Integer.parseInt(semester.getValue().charAt(9) + ""), specialty.getValue());
             }
-        }
-        columnExam.setText("Module 1");
-        columnTp.setText("Module 2");
-        columnCc.setText("Module 3");
+        });
+        year.setValue("1");
+
+        // Configure Table View for Courses
+        serialNo.setCellFactory(indexCellFactory());
+        columnFirstName.setCellValueFactory(new PropertyValueFactory<>("firstname"));
+        columnLastName.setCellValueFactory(new PropertyValueFactory<>("lastname"));
+        columnExam.setCellValueFactory(new PropertyValueFactory<>("exam"));
+        columnExam.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+        columnExam.setOnEditCommit(event -> {
+            String queryText = String.format(
+                    "UPDATE grades SET exam = %d WHERE (id = %d)",
+                    event.getNewValue(), event.getRowValue().getId()
+            );
+            event.getRowValue().setExam(event.getNewValue());
+            event.getRowValue().setTotal();
+            updateItem(coursesTableView.getItems(), event.getRowValue());
+            try {
+                executeQuery(connection, queryText);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+        columnTp.setCellValueFactory(new PropertyValueFactory<>("tp"));
+        columnTp.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+        columnTp.setOnEditCommit(event -> {
+            String queryText = String.format(
+                    "UPDATE grades SET tp = %d WHERE (id = %d)",
+                    event.getNewValue(), event.getRowValue().getId()
+            );
+            event.getRowValue().setTp(event.getNewValue());
+            event.getRowValue().setTotal();
+            updateItem(coursesTableView.getItems(), event.getRowValue());
+            try {
+                executeQuery(connection, queryText);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+        columnCc.setCellValueFactory(new PropertyValueFactory<>("cc"));
+        columnCc.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+        columnCc.setOnEditCommit(event -> {
+            String queryText = String.format(
+                    "UPDATE grades SET cc = %d WHERE (id = %d)",
+                    event.getNewValue(), event.getRowValue().getId()
+            );
+            event.getRowValue().setCc(event.getNewValue());
+            event.getRowValue().setTotal();
+            updateItem(coursesTableView.getItems(), event.getRowValue());
+            try {
+                executeQuery(connection, queryText);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+        columnTotal.setCellValueFactory(new PropertyValueFactory<>("total"));
+        columnSituation.setCellValueFactory(new PropertyValueFactory<>("situation"));
+
+        course.setOnAction(event -> {
+            try {
+                coursesTableView.setItems(getCourseGrades(Integer.parseInt(semester.getValue().charAt(9)+""), specialty.getValue(), course.getValue()));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+
+        back.setOnMouseClicked(event -> {
+            resultOptions.setVisible(true);
+            resultTitle.setVisible(false);
+            coursesTableView.setVisible(false);
+            course.setVisible(false);
+            back.setVisible(false);
+            divider.setVisible(false);
+            getCourses(Integer.parseInt(semester.getValue().charAt(9)+""), specialty.getValue());
+        });
+
     }
 
-    @FXML
-    void editGrade() {
-        int index = tableView.getSelectionModel().getSelectedIndex();
-        if (index == -1) {
-            alert(Alert.AlertType.ERROR, "Student", "Select a column to edit");
-            return;
+    /**
+     * This method updates an item in an observable list
+     * @param list ObservableList item
+     * @param item Object in the ObservableList
+     */
+    private void updateItem(ObservableList<SupervisorGradesModel> list, SupervisorGradesModel item) {
+        int index = list.indexOf(item);
+        if (index >= 0) {
+            list.set(index, item);
         }
-        SupervisorGradesModel student = tableView.getSelectionModel().getModelItem(index).getValue();
-        if (student.getId() == -1) {
-            return;
-        }
-        id = student.getId();
-        fullName.setText(student.getFirstname() + " " + student.getLastname());
-        examGrade.setText(student.getExamGrade()+"");
-        tpGrade.setText(student.getTpGrade()+"");
-        ccGrade.setText(student.getCcGrade()+"");
-
-        update.setDisable(false);
-        edit.setDisable(true);
     }
 
-    @FXML
-    void updateGrade() {
-        String queryText = String.format(
-                "UPDATE grades SET exam = '%s', tp = '%s', cc = %s WHERE (id = %d)",
-                examGrade.getText(), tpGrade.getText(), ccGrade.getText(), id
-        );
+    private void getCourses(int semester, String specialty) {
+        courses.getItems().clear();
+        courses.getItems().add("All Courses");
+        String queryText = String.format("SELECT subject.subject FROM courses " +
+                "INNER JOIN subject ON subject.id = courses.subject_id " +
+                "WHERE semester = %d AND specialty = '%s'", semester, specialty);
         try {
-            executeQuery(connection, queryText);
-            getSubjects();
-            getGrades();
+            ResultSet response = getResponse(connection, queryText);
+            while (response.next()) {
+                courses.getItems().add(response.getString("subject"));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        fullName.clear();
-        examGrade.clear();
-        tpGrade.clear();
-        ccGrade.clear();
-        update.setDisable(true);
-        edit.setDisable(false);
+        if (courses.getItems().size() >= 1) {
+            courses.setValue(courses.getItems().get(0));
+        }
+    }
+
+    private ObservableList<SupervisorGradesModel> getCourseGrades(int semester, String specialty, String course) throws SQLException {
+        String queryText = String.format("SELECT grades.id, student.firstname, student.lastname, exam, tp, cc, examCoeff, tpCoeff, ccCoeff, " +
+                "(exam * examCoeff * 0.01) + (tp * tpCoeff * 0.01) + (cc * ccCoeff * 0.01) AS total FROM grades INNER JOIN student ON student.id = grades.student_id " +
+                "INNER JOIN courses ON courses.id = grades.courses_id INNER JOIN subject ON subject.id = courses.subject_id INNER JOIN professor ON professor.subject_id = subject.id " +
+                "WHERE subject = '%s' AND semester = %d AND student.specialty = '%s'", course, semester, specialty);
+        ObservableList<SupervisorGradesModel> coursesGrades = FXCollections.observableArrayList();
+        ResultSet results = getResponse(connection, queryText);
+        while (results.next()) {
+            coursesGrades.add(new SupervisorGradesModel(
+                    results.getInt("id"), results.getString("firstname"), results.getString("lastname"),
+                    results.getInt("exam"), results.getInt("tp"), results.getInt("cc"),
+                    results.getInt("examCoeff"), results.getInt("tpCoeff"), results.getInt("ccCoeff"), results.getInt("total")));
+        }
+        return coursesGrades;
+    }
+
+    @FXML
+    void submit() {
+        if (courses.getValue().contains("All Courses")) {
+            courses.getItems().remove("All Courses");
+            courses.setValue(courses.getItems().get(0));
+            course.getItems().setAll(courses.getItems());
+            course.setValue(courses.getItems().get(0));
+            course.setVisible(true);
+            columnExam.setVisible(false);
+            columnTp.setVisible(false);
+            columnCc.setVisible(false);
+            columnSituation.setVisible(false);
+            divider.setVisible(true);
+        } else {
+            columnExam.setVisible(true);
+            columnTp.setVisible(true);
+            columnCc.setVisible(true);
+            columnSituation.setVisible(true);
+        }
+        resultOptions.setVisible(false);
+        resultTitle.setVisible(true);
+        coursesTableView.setVisible(true);
+        back.setVisible(true);
+        try {
+            coursesTableView.setItems(getCourseGrades(Integer.parseInt(semester.getValue().charAt(9)+""), specialty.getValue(), courses.getValue()));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 }

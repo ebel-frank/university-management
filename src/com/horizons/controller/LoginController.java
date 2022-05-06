@@ -23,6 +23,12 @@ public class LoginController extends BaseController {
     }
 
     @FXML
+    void initialize() {
+        email.setText("yash");
+        password.setText("12345");
+    }
+
+    @FXML
     protected void loginBtnAction() {
         if (fieldsAreValid()) {
             Connection connection = AppDatabase.getConnection();

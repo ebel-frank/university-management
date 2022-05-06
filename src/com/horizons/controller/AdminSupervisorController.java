@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 
 import java.sql.Connection;
@@ -26,7 +27,7 @@ public class AdminSupervisorController extends BaseController {
     private final int type;
 
     @FXML
-    private Button add, edit, update, delete;
+    private Button add, delete;
 
     @FXML
     private Label optionTitle, firstNameTitle, lastNameTitle, emailTitle, passwordTitle;
@@ -48,6 +49,7 @@ public class AdminSupervisorController extends BaseController {
 
     @FXML
     void initialize() {
+        preventColumnReordering(supervisorTable);
         if (type == 0) {
             optionTitle.setVisible(false);
             firstNameTitle.setVisible(false);
@@ -60,16 +62,72 @@ public class AdminSupervisorController extends BaseController {
             email.setVisible(false);
             password.setVisible(false);
             add.setVisible(false);
-            edit.setVisible(false);
-            update.setVisible(false);
             delete.setVisible(false);
             AnchorPane.setRightAnchor(supervisorTable, 10.0);
+        } else {
+            columnFirstName.setCellFactory(TextFieldTableCell.forTableColumn());
+            columnLastName.setCellFactory(TextFieldTableCell.forTableColumn());
+            columnEmail.setCellFactory(TextFieldTableCell.forTableColumn());
+            columnPassword.setCellFactory(TextFieldTableCell.forTableColumn());
         }
         columnId.setCellValueFactory(new PropertyValueFactory<>("id"));
         columnFirstName.setCellValueFactory(new PropertyValueFactory<>("firstname"));
+        columnFirstName.setOnEditCommit(event -> {
+            String queryText = String.format(
+                    "UPDATE supervisor SET firstname = '%s' WHERE (id = %d)",
+                    event.getNewValue(), event.getRowValue().getId()
+            );
+            event.getRowValue().setFirstname(event.getNewValue());
+            try {
+                executeQuery(connection, queryText);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
         columnLastName.setCellValueFactory(new PropertyValueFactory<>("lastname"));
+        columnLastName.setOnEditCommit(event -> {
+            String queryText = String.format(
+                    "UPDATE supervisor SET lastname = '%s' WHERE (id = %d)",
+                    event.getNewValue(), event.getRowValue().getId()
+            );
+            event.getRowValue().setLastname(event.getNewValue());
+            try {
+                executeQuery(connection, queryText);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
         columnEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+        columnEmail.setOnEditCommit(event -> {
+            String queryText = String.format(
+                    "UPDATE credentials SET email = '%s' WHERE (id = %d)",
+                    event.getNewValue(), event.getRowValue().getCredentialID()
+            );
+            try {
+                executeQuery(connection, queryText);
+                event.getRowValue().setEmail(event.getNewValue());
+            } catch (SQLException e) {
+                // Operation failed
+                alert(Alert.AlertType.ERROR, "Supervisor", "Email already exists");
+                int index = supervisors.indexOf(event.getRowValue());
+                if (index >= 0) {
+                    supervisors.set(index, event.getRowValue());
+                }
+            }
+        });
         columnPassword.setCellValueFactory(new PropertyValueFactory<>("password"));
+        columnPassword.setOnEditCommit(event -> {
+            String queryText = String.format(
+                    "UPDATE credentials SET password = '%s' WHERE (id = %d)",
+                    event.getNewValue(), event.getRowValue().getCredentialID()
+            );
+            event.getRowValue().setPassword(event.getNewValue());
+            try {
+                executeQuery(connection, queryText);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
 
         try {
             supervisors = getSupervisors();
@@ -78,7 +136,6 @@ public class AdminSupervisorController extends BaseController {
             e.printStackTrace();
         }
 
-        update.setDisable(true);
     }
 
     private ObservableList<AdminSupervisorModel> getSupervisors() throws SQLException {
@@ -157,52 +214,6 @@ public class AdminSupervisorController extends BaseController {
                 }
             }
         });
-    }
-
-    @FXML
-    void editUser() {
-        int index = supervisorTable.getSelectionModel().getSelectedIndex();
-        if (index == -1) {
-            alert(Alert.AlertType.ERROR, "Supervisor", "Select a column to edit");
-            return;
-        }
-        AdminSupervisorModel supervisor = supervisors.get(index);
-        id = supervisor.getId();
-        credentialId = supervisor.getCredentialID();
-        firstName.setText(supervisor.getFirstname());
-        lastName.setText(supervisor.getLastname());
-        email.setText(supervisor.getLastname());
-        password.setText(supervisor.getLastname());
-        add.setDisable(true);
-        update.setDisable(false);
-        delete.setDisable(true);
-    }
-
-    @FXML
-    void updateUser() {
-        String queryText = String.format(
-                "UPDATE supervisor SET firstname = '%s', lastname = '%s' WHERE (id = %d)",
-                firstName.getText(), lastName.getText(), id
-        );
-        try {
-            executeQuery(connection, queryText);
-            queryText = String.format(
-                    "UPDATE credentials SET email = '%s', password = '%s' WHERE (id = %d)",
-                    email.getText(), password.getText(), credentialId
-            );
-            executeQuery(connection, queryText);
-            supervisors.clear();
-            supervisors.addAll(getSupervisors());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        firstName.clear();
-        lastName.clear();
-        email.clear();
-        password.clear();
-        update.setDisable(true);
-        add.setDisable(false);
-        delete.setDisable(false);
     }
 
 }
