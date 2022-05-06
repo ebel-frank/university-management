@@ -1,6 +1,10 @@
 package com.horizons;
 
+import javafx.application.Platform;
+import javafx.event.Event;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 
 import java.sql.Connection;
@@ -22,22 +26,15 @@ public class Utils {
         return statement.executeQuery(queryText);
     }
 
+    /**
+     * This queries database using the queryText
+     * @param connection SQL connection
+     * @param queryText SQL statements
+     * @throws SQLException when queryText is incorrect
+     */
     public static void executeQuery(Connection connection, String queryText) throws SQLException {
         Statement statement = connection.createStatement();
         statement.executeUpdate(queryText);
-    }
-
-    /**
-     * @param user an integer value representing the user in the database
-     * @return the string value representing the user
-     */
-    public static String getUser(int user) {
-        return switch (user) {
-            case 0 -> "Student";
-            case 1 -> "Professor";
-            case 2 -> "Supervisor";
-            default -> "Admin";
-        };
     }
 
     /**
@@ -134,7 +131,7 @@ public class Utils {
     }
 
     /**
-     * This is used for the serial number column
+     * This is used for the serial number in a TableColumn
      * @param <T>
      * @return Callback object
      */
@@ -147,4 +144,54 @@ public class Utils {
             }
         };
     }
+
+    /**
+     * This is used for the serial number in a TreeTableColumn
+     * @param <T>
+     * @return Callback object
+     */
+    public static <T> Callback<TreeTableColumn<T, Void>, TreeTableCell<T, Void>> treeIndexCellFactory() {
+        return  t -> new TreeTableCell<>() {
+            @Override
+            public void updateIndex(int i) {
+                super.updateIndex(i);
+                setText(isEmpty() ? "" : Integer.toString(i + 1));
+            }
+        };
+    }
+
+    /**
+     * This method prevents the tableview from reordering its columns
+     * @param tableView it could be a TreeTableView object or a TableView object
+     */
+    public static <T> void preventColumnReordering(Control tableView) {
+        Platform.runLater(() -> {
+            for (Node header: tableView.lookupAll(".column-header")) {
+                header.addEventFilter(MouseEvent.MOUSE_DRAGGED, Event::consume);
+            }
+        });
+    }
+
+    /**
+     * A Custom Row factory that makes the dropdown row not editable,
+     * and it's children rows editable
+     * @param table TreeTableView Object
+     * @return  A custom row factory
+     */
+    public static <T> Callback<TreeTableView<T>, TreeTableRow<T>> getTreeTableViewRowFactory(TreeTableView<T> table) {
+        return new Callback<>() {
+            @Override
+            public TreeTableRow<T> call(TreeTableView<T> param) {
+                return new TreeTableRow<>() {
+                    @Override
+                    public void updateItem(T obj, boolean empty) {
+                        super.updateItem(obj, empty);
+                        boolean isTopLevel = table.getRoot().getChildren().contains(treeItemProperty().get());
+                        setEditable(isEmpty() || !isTopLevel);
+                    }
+                };
+            }
+        };
+    }
+
 }

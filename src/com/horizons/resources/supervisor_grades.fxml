@@ -1,60 +1,80 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.TreeTableColumn?>
-<?import javafx.scene.control.TreeTableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="529.0" minWidth="868.0" prefHeight="529.0" prefWidth="868.0" snapToPixel="false" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-   <TabPane fx:id="gradesTabPane" prefHeight="509.0" prefWidth="599.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
-     <tabs>
-       <Tab fx:id="courses" text="Courses">
-            <content>
-               <TreeTableView fx:id="tableView" prefHeight="509.0" prefWidth="599.0">
-                 <columns>
-                   <TreeTableColumn fx:id="columnFirstName" prefWidth="136.0" resizable="false" text="First Name" />
-                     <TreeTableColumn fx:id="columnLastName" prefWidth="142.0" resizable="false" text="Last Name" />
-                   <TreeTableColumn fx:id="columnExam" prefWidth="72.0" resizable="false" text="Exam Grade" />
-                     <TreeTableColumn fx:id="columnTp" prefWidth="62.0" resizable="false" text="TP Grade" />
-                     <TreeTableColumn fx:id="columnCc" prefWidth="65.0" resizable="false" text="CC Grade" />
-                     <TreeTableColumn fx:id="columnTotal" prefWidth="59.0" resizable="false" text="Total" />
-                     <TreeTableColumn fx:id="columnSituation" prefWidth="63.0" resizable="false" text="Situation" />
-                 </columns>
-                  <columnResizePolicy>
-                     <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                  </columnResizePolicy>
-               </TreeTableView>
-            </content>
-         </Tab>
-         <Tab fx:id="semester" text="Semester" />
-     </tabs>
-   </TabPane>
-   <Label layoutX="622.0" layoutY="61.0" text="Name" />
-   <TextField fx:id="fullName" disable="true" layoutX="709.0" layoutY="57.0" prefHeight="25.0" prefWidth="138.0" AnchorPane.rightAnchor="21.0" />
-   <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="709.0" layoutY="17.0" prefHeight="20.0" prefWidth="103.0" text="Student Details" textAlignment="RIGHT">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="560.0" prefWidth="943.0" snapToPixel="false" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+   <Label fx:id="resultTitle" layoutX="12.0" layoutY="57.0" text="Results" visible="false" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="20.0">
       <font>
-         <Font name="System Bold" size="14.0" />
+         <Font size="18.0" />
       </font>
    </Label>
-   <Button fx:id="edit" layoutX="709.0" layoutY="225.0" mnemonicParsing="false" onAction="#editGrade" prefHeight="27.0" prefWidth="138.0" text="Edit">
+   <ChoiceBox fx:id="course" layoutX="707.0" layoutY="20.0" prefWidth="150.0" visible="false" AnchorPane.topAnchor="20.0" />
+   <TableView fx:id="coursesTableView" editable="true" layoutX="27.0" layoutY="53.0" prefHeight="497.0" prefWidth="913.0" visible="false" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="53.0">
+     <columns>
+         <TableColumn fx:id="serialNo" prefWidth="45.0" resizable="false" text="S/N" />
+       <TableColumn fx:id="columnFirstName" prefWidth="183.0" resizable="false" text="First Name" />
+       <TableColumn fx:id="columnLastName" prefWidth="191.0" resizable="false" text="Last Name" />
+         <TableColumn fx:id="columnExam" prefWidth="102.0" resizable="false" text="Exam Grade" />
+         <TableColumn fx:id="columnTp" prefWidth="107.0" resizable="false" text="TP Grade" />
+         <TableColumn fx:id="columnCc" prefWidth="106.0" resizable="false" text="CC Grade" />
+         <TableColumn fx:id="columnTotal" prefWidth="91.0" resizable="false" text="Total" />
+         <TableColumn fx:id="columnSituation" prefWidth="87.0" resizable="false" text="Situation" />
+     </columns>
+      <columnResizePolicy>
+         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+      </columnResizePolicy>
+   </TableView>
+   <Pane fx:id="resultOptions" layoutX="306.0" layoutY="101.0" prefHeight="350.0" prefWidth="411.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="250.0" AnchorPane.topAnchor="100.0">
+      <children>
+         <Button layoutX="180.0" layoutY="298.0" mnemonicParsing="false" onAction="#submit" prefHeight="33.0" prefWidth="182.0" styleClass="btn" text="SUBMIT" />
+         <Label layoutX="81.0" layoutY="99.0" prefHeight="20.0" prefWidth="55.0" text="Year">
+            <font>
+               <Font size="14.0" />
+            </font>
+         </Label>
+         <Label layoutX="81.0" layoutY="150.0" text="Specialty">
+            <font>
+               <Font size="14.0" />
+            </font>
+         </Label>
+         <Label layoutX="81.0" layoutY="205.0" text="Semester">
+            <font>
+               <Font size="14.0" />
+            </font>
+         </Label>
+         <Label layoutX="81.0" layoutY="255.0" text="Courses">
+            <font>
+               <Font size="14.0" />
+            </font>
+         </Label>
+         <Label layoutX="82.0" layoutY="29.0" prefHeight="51.0" prefWidth="279.0" text="Please select the year, semester specialty and courses" wrapText="true">
+            <font>
+               <Font name="System Bold" size="15.0" />
+            </font>
+         </Label>
+         <ChoiceBox fx:id="year" layoutX="180.0" layoutY="97.0" prefHeight="25.0" prefWidth="182.0" />
+         <ChoiceBox fx:id="specialty" layoutX="180.0" layoutY="148.0" prefHeight="25.0" prefWidth="182.0" />
+         <ChoiceBox fx:id="semester" layoutX="180.0" layoutY="202.0" prefHeight="25.0" prefWidth="182.0" />
+         <ChoiceBox fx:id="courses" layoutX="180.0" layoutY="252.0" prefHeight="25.0" prefWidth="182.0" />
+      </children>
+      <styleClass>
+         <String fx:value="curved_pane" />
+         <String fx:value="login_pane" />
+      </styleClass>
+   </Pane>
+   <Label fx:id="back" layoutX="890.0" layoutY="20.0" text="Back" visible="false">
       <font>
-         <Font size="13.0" />
+         <Font size="16.0" />
       </font>
-   </Button>
-   <Label layoutX="622.0" layoutY="102.0" text="Exam Grade" />
-   <Label layoutX="623.0" layoutY="144.0" text="TP Grade" />
-   <Label layoutX="624.0" layoutY="186.0" text="CC Grade" />
-   <TextField fx:id="tpGrade" layoutX="709.0" layoutY="140.0" prefHeight="25.0" prefWidth="74.0" />
-   <TextField fx:id="ccGrade" layoutX="709.0" layoutY="181.0" prefHeight="25.0" prefWidth="74.0" />
-   <Button fx:id="update" disable="true" layoutX="709.0" layoutY="267.0" mnemonicParsing="false" onAction="#updateGrade" prefHeight="27.0" prefWidth="138.0" text="Update">
-      <font>
-         <Font size="13.0" />
-      </font>
-   </Button>
-   <TextField fx:id="examGrade" layoutX="709.0" layoutY="98.0" prefHeight="25.0" prefWidth="74.0" />
+   </Label>
+   <Line fx:id="divider" endX="-76.0" layoutX="964.0" layoutY="32.0" rotate="90.0" startX="-100.0" stroke="#8a8a8a" visible="false" />
 </AnchorPane>

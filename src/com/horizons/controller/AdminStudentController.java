@@ -5,14 +5,18 @@ import com.horizons.database.AppDatabase;
 import com.horizons.model.AdminStudentModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.ChoiceBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.horizons.Utils.*;
@@ -21,11 +25,10 @@ public class AdminStudentController extends BaseController {
 
     private final Connection connection;
     private ObservableList<AdminStudentModel> students;
-    private int id, credentialId;
     private final int type;
 
     @FXML
-    private Button add, edit, update, delete;
+    private Button add, delete;
 
     @FXML
     private Label optionTitle, firstNameTitle, lastNameTitle, emailTitle, passwordTitle, specialtyTitle, yearTitle;
@@ -56,6 +59,7 @@ public class AdminStudentController extends BaseController {
 
     @FXML
     void initialize() {
+        preventColumnReordering(allYearsTable);
         if (type == 0) {
             optionTitle.setVisible(false);
             firstNameTitle.setVisible(false);
@@ -72,10 +76,15 @@ public class AdminStudentController extends BaseController {
             year.setVisible(false);
             specialty.setVisible(false);
             add.setVisible(false);
-            edit.setVisible(false);
-            update.setVisible(false);
             delete.setVisible(false);
             AnchorPane.setRightAnchor(studentTabPane, 10.0);
+
+        } else {
+            columnFirstName.setCellFactory(TextFieldTableCell.forTableColumn());
+            columnLastName.setCellFactory(TextFieldTableCell.forTableColumn());
+            columnEmail.setCellFactory(TextFieldTableCell.forTableColumn());
+            columnPassword.setCellFactory(TextFieldTableCell.forTableColumn());
+            columnSpecialty.setCellFactory(ChoiceBoxTableCell.forTableColumn("TC", "SIC","GE","GME"));
 
         }
         studentTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
@@ -110,11 +119,93 @@ public class AdminStudentController extends BaseController {
         });
         columnId.setCellValueFactory(new PropertyValueFactory<>("id"));
         columnFirstName.setCellValueFactory(new PropertyValueFactory<>("firstname"));
+        columnFirstName.setOnEditCommit(event -> {
+            String queryText = String.format(
+                    "UPDATE student SET firstname = '%s' WHERE (id = %d)",
+                    event.getNewValue(), event.getRowValue().getId()
+            );
+            event.getRowValue().setFirstname(event.getNewValue());
+            try {
+                executeQuery(connection, queryText);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
         columnLastName.setCellValueFactory(new PropertyValueFactory<>("lastname"));
+        columnLastName.setOnEditCommit(event -> {
+            String queryText = String.format(
+                    "UPDATE student SET lastname = '%s' WHERE (id = %d)",
+                    event.getNewValue(), event.getRowValue().getId()
+            );
+            event.getRowValue().setLastname(event.getNewValue());
+            try {
+                executeQuery(connection, queryText);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
         columnEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+        columnEmail.setOnEditCommit(event -> {
+            String queryText = String.format(
+                    "UPDATE credentials SET email = '%s' WHERE (id = %d)",
+                    event.getNewValue(), event.getRowValue().getCredentialID()
+            );
+            try {
+                executeQuery(connection, queryText);
+                event.getRowValue().setEmail(event.getNewValue());
+            } catch (SQLException e) {
+                // Operation failed
+                alert(Alert.AlertType.ERROR, "Student", "Email already exists");
+                int index = students.indexOf(event.getRowValue());
+                if (index >= 0) {
+                    students.set(index, event.getRowValue());
+                }
+            }
+        });
         columnPassword.setCellValueFactory(new PropertyValueFactory<>("password"));
+        columnPassword.setOnEditCommit(event -> {
+            String queryText = String.format(
+                    "UPDATE credentials SET password = '%s' WHERE (id = %d)",
+                    event.getNewValue(), event.getRowValue().getCredentialID()
+            );
+            event.getRowValue().setPassword(event.getNewValue());
+            try {
+                executeQuery(connection, queryText);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
         columnYear.setCellValueFactory(new PropertyValueFactory<>("year"));
         columnSpecialty.setCellValueFactory(new PropertyValueFactory<>("specialty"));
+        columnSpecialty.setOnEditCommit(event -> {
+            int year = 2;
+            String newValue = event.getNewValue();
+            if (!Objects.equals(newValue, event.getRowValue().getSpecialty())) {
+                if (Objects.equals(newValue, "TC")) {
+                    year = 1;
+                }
+                String queryText = String.format(
+                        "UPDATE student SET year = %d, specialty = '%s' WHERE (id = %d)",
+                        year, event.getNewValue(), event.getRowValue().getId()
+                );
+                event.getRowValue().setSpecialty(event.getNewValue());
+                event.getRowValue().setYear(year);
+                new Thread(new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        executeQuery(connection, queryText);
+
+                        unregisterStudentForCourses(connection, event.getRowValue().getId());
+                        registerStudentForCourses(connection, event.getRowValue().getSpecialty(), event.getRowValue().getId());
+                        return null;
+                    }
+                }).start();
+                int index = students.indexOf(event.getRowValue());
+                if (index >= 0) {
+                    students.set(index, event.getRowValue());
+                }
+            }
+        });
 
         try {
             students = getStudents();
@@ -135,8 +226,6 @@ public class AdminStudentController extends BaseController {
             specialty.setValue("SIC");
         });
         year.setValue("1");
-
-        update.setDisable(true);
     }
 
     private ObservableList<AdminStudentModel> getStudents(int year) throws SQLException {
@@ -227,56 +316,6 @@ public class AdminStudentController extends BaseController {
                 }
             }
         });
-    }
-
-    @FXML
-    void editUser() {
-        int index = allYearsTable.getSelectionModel().getSelectedIndex();
-        if (index == -1) {
-            alert(Alert.AlertType.ERROR, "Student", "Select a column to edit");
-            return;
-        }
-        AdminStudentModel student = students.get(index);
-        id = student.getId();
-        credentialId = student.getCredentialID();
-        firstName.setText(student.getFirstname());
-        lastName.setText(student.getLastname());
-        email.setText(student.getEmail());
-        password.setText(student.getPassword());
-        year.setValue(student.getYear()+"");
-        specialty.setValue(student.getSpecialty());
-        add.setDisable(true);
-        update.setDisable(false);
-        delete.setDisable(true);
-    }
-
-    @FXML
-    void updateUser() {
-        String queryText = String.format(
-                "UPDATE student SET firstname = '%s', lastname = '%s', year = %s, specialty = '%s' WHERE (id = %d)",
-                firstName.getText(), lastName.getText(), year.getValue(), specialty.getValue(), id
-        );
-        try {
-            executeQuery(connection, queryText);
-            queryText = String.format(
-                    "UPDATE credentials SET email = '%s', password = '%s' WHERE (id = %d)",
-                    email.getText(), password.getText(), credentialId
-            );
-            executeQuery(connection, queryText);
-            students.clear();
-            students.addAll(getStudents(studentTabPane.getSelectionModel().getSelectedIndex()));
-            unregisterStudentForCourses(connection, id);
-            registerStudentForCourses(connection, specialty.getValue(), id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        firstName.clear();
-        lastName.clear();
-        email.clear();
-        password.clear();
-        update.setDisable(true);
-        add.setDisable(false);
-        delete.setDisable(false);
     }
 
 }

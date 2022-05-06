@@ -1,24 +1,37 @@
 package com.horizons.model;
 
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+
 public class StudentModel {
     private int id;
-    private String fullname;
-    private String specialty;
-    private int examGrade;
-    private int tpGrade;
-    private int ccGrade;
-    private double total;
+    private SimpleStringProperty fullname;
+    private SimpleStringProperty specialty;
+    private SimpleIntegerProperty examGrade;
+    private SimpleIntegerProperty tpGrade;
+    private SimpleIntegerProperty ccGrade;
+    private SimpleStringProperty total;
 
     public StudentModel(int id, String fullname, String specialty, int examGrade,
-                        int tpGrade, int ccGrade, int examCoeff, int tpCoeff, int ccCoeff) {
+                        int tpGrade, int ccGrade, double total) {
         this.id = id;
-        this.fullname = fullname;
-        this.specialty = specialty;
-        this.examGrade = examGrade;
-        this.tpGrade = tpGrade;
-        this.ccGrade = ccGrade;
-        this.total = ((examGrade * examCoeff * 0.01) + (tpGrade * tpCoeff * 0.01) + (ccGrade * ccCoeff * 0.01));
+        this.fullname = new SimpleStringProperty(fullname);
+        this.specialty = new SimpleStringProperty(specialty);
+        this.examGrade = new SimpleIntegerProperty(examGrade);
+        this.tpGrade = new SimpleIntegerProperty(tpGrade);
+        this.ccGrade = new SimpleIntegerProperty(ccGrade);
+        this.total = new SimpleStringProperty(total+"");
     }
+
+    public StudentModel(String title) {
+        this.fullname = new SimpleStringProperty(title);
+    }
+    public StudentModel(String fullname, String specialty) {
+        this.fullname = new SimpleStringProperty(fullname);
+        this.specialty = new SimpleStringProperty(specialty);
+    }
+
+
 
     public int getId() {
         return id;
@@ -29,50 +42,74 @@ public class StudentModel {
     }
 
     public String getFullname() {
+        return fullname.get();
+    }
+
+    public SimpleStringProperty fullnameProperty() {
         return fullname;
     }
 
     public void setFullname(String fullname) {
-        this.fullname = fullname;
+        this.fullname.set(fullname);
     }
 
     public String getSpecialty() {
+        return specialty.get();
+    }
+
+    public SimpleStringProperty specialtyProperty() {
         return specialty;
     }
 
     public void setSpecialty(String specialty) {
-        this.specialty = specialty;
+        this.specialty.set(specialty);
     }
 
     public int getExamGrade() {
+        return examGrade.get();
+    }
+
+    public SimpleIntegerProperty examGradeProperty() {
         return examGrade;
     }
 
     public void setExamGrade(int examGrade) {
-        this.examGrade = examGrade;
+        this.examGrade.set(examGrade);
     }
 
     public int getTpGrade() {
+        return tpGrade.get();
+    }
+
+    public SimpleIntegerProperty tpGradeProperty() {
         return tpGrade;
     }
 
     public void setTpGrade(int tpGrade) {
-        this.tpGrade = tpGrade;
+        this.tpGrade.set(tpGrade);
     }
 
     public int getCcGrade() {
+        return ccGrade.get();
+    }
+
+    public SimpleIntegerProperty ccGradeProperty() {
         return ccGrade;
     }
 
     public void setCcGrade(int ccGrade) {
-        this.ccGrade = ccGrade;
+        this.ccGrade.set(ccGrade);
     }
 
-    public double getTotal() {
+    public String getTotal() {
+        return total.get();
+    }
+
+    public SimpleStringProperty totalProperty() {
         return total;
     }
 
-    public void setTotal(double total) {
-        this.total = total;
+    public void setTotal(int examCoeff, int tpCoeff, int ccCoeff) {
+        this.total.set((examGrade.get() * examCoeff * 0.01) + (tpGrade.get() * tpCoeff * 0.01) + (ccGrade.get() * ccCoeff * 0.01)+"");
     }
 }

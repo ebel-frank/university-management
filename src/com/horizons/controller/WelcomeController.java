@@ -10,8 +10,8 @@ public class WelcomeController extends BaseController {
     @FXML
     private Button option1, option2;
 
-    private int id, user;
-    private String optionText1, optionText2;
+    private final int id, user;
+    private final String optionText1, optionText2;
 
     public WelcomeController(ViewFactory viewFactory, String fxmlName, int id,
                              int user, String optionText1, String optionText2) {

@@ -5,17 +5,23 @@ import com.horizons.database.AppDatabase;
 import com.horizons.model.AdminProfessorModel;
 import com.horizons.model.AdminStudentModel;
 import com.horizons.model.AdminSupervisorModel;
+import com.horizons.model.StudentModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.ChoiceBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
+import javafx.util.converter.IntegerStringConverter;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Savepoint;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static com.horizons.Utils.*;
@@ -25,11 +31,11 @@ public class AdminProfessorController extends BaseController {
 
     private final Connection connection;
     private ObservableList<AdminProfessorModel> professors;
-    private int id, credentialId;
     private final int type;
+    private final List<String> subjects = new ArrayList<>();
 
     @FXML
-    private Button add, edit, update, delete;
+    private Button add, delete;
 
     @FXML
     private Label optionTitle, firstNameTitle, lastNameTitle, emailTitle, passwordTitle, subjectTitle;
@@ -54,6 +60,99 @@ public class AdminProfessorController extends BaseController {
 
     @FXML
     void initialize() {
+        preventColumnReordering(professorTable);
+        columnId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        columnFirstName.setCellValueFactory(new PropertyValueFactory<>("firstname"));
+        columnFirstName.setOnEditCommit(event -> {
+            String queryText = String.format(
+                    "UPDATE professor SET firstname = '%s' WHERE (id = %d)",
+                    event.getNewValue(), event.getRowValue().getId()
+            );
+            event.getRowValue().setFirstname(event.getNewValue());
+            try {
+                executeQuery(connection, queryText);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+        columnLastName.setCellValueFactory(new PropertyValueFactory<>("lastname"));
+        columnLastName.setOnEditCommit(event -> {
+            String queryText = String.format(
+                    "UPDATE professor SET lastname = '%s' WHERE (id = %d)",
+                    event.getNewValue(), event.getRowValue().getId()
+            );
+            event.getRowValue().setLastname(event.getNewValue());
+            try {
+                executeQuery(connection, queryText);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+        columnEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+        columnEmail.setOnEditCommit(event -> {
+            String queryText = String.format(
+                    "UPDATE credentials SET email = '%s' WHERE (id = %d)",
+                    event.getNewValue(), event.getRowValue().getCredentialID()
+            );
+            try {
+                executeQuery(connection, queryText);
+                event.getRowValue().setEmail(event.getNewValue());
+            } catch (SQLException e) {
+                // Operation Failed
+                alert(Alert.AlertType.ERROR, "Professor", "Email already exists");
+                int index = professors.indexOf(event.getRowValue());
+                if (index >= 0) {
+                    professors.set(index, event.getRowValue());
+                }
+            }
+        });
+        columnPassword.setCellValueFactory(new PropertyValueFactory<>("password"));
+        columnPassword.setOnEditCommit(event -> {
+            String queryText = String.format(
+                    "UPDATE credentials SET password = '%s' WHERE (id = %d)",
+                    event.getNewValue(), event.getRowValue().getCredentialID()
+            );
+            event.getRowValue().setPassword(event.getNewValue());
+            try {
+                executeQuery(connection, queryText);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+        columnSubject.setCellValueFactory(new PropertyValueFactory<>("subject"));
+        columnSubject.setOnEditCommit(event -> {
+            try {
+                String queryText = String.format(
+                        "UPDATE professor SET subject_id = %d WHERE (id = %d)",
+                        getSubjectId(event.getNewValue()), event.getRowValue().getId()
+                );
+                executeQuery(connection, queryText);
+                event.getRowValue().setSubject(event.getNewValue());
+            } catch (SQLException e) {
+                // Operation Failed, then we reload the row
+                alert(Alert.AlertType.ERROR, "Professor", "The subject is already taken by a different professor");
+                int index = professors.indexOf(event.getRowValue());
+                if (index >= 0) {
+                    professors.set(index, event.getRowValue());
+                }
+            }
+        });
+        try {
+            professors = getProfessors();
+            professorTable.setItems(professors);
+
+            String queryText = "SELECT subject FROM subject";
+            ResultSet response = getResponse(connection, queryText);
+            while (response.next()) {
+                subjects.add(response.getString("subject"));
+            }
+            subject.getItems().addAll(subjects);
+            if (subject.getItems().size() == 1) {
+                subject.setValue(subject.getItems().get(0));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         if (type == 0) {
             optionTitle.setVisible(false);
             firstNameTitle.setVisible(false);
@@ -67,37 +166,17 @@ public class AdminProfessorController extends BaseController {
             email.setVisible(false);
             password.setVisible(false);
             subject.setVisible(false);
-            add.setVisible(false);
-            edit.setVisible(false);
-            update.setVisible(false);
+            add.setVisible(false);;
             delete.setVisible(false);
             AnchorPane.setRightAnchor(professorTable, 10.0);
 
+        } else {
+            columnFirstName.setCellFactory(TextFieldTableCell.forTableColumn());
+            columnLastName.setCellFactory(TextFieldTableCell.forTableColumn());
+            columnEmail.setCellFactory(TextFieldTableCell.forTableColumn());
+            columnPassword.setCellFactory(TextFieldTableCell.forTableColumn());
+            columnSubject.setCellFactory(ChoiceBoxTableCell.forTableColumn(subjects.toArray(String[]::new)));
         }
-        columnId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        columnFirstName.setCellValueFactory(new PropertyValueFactory<>("firstname"));
-        columnLastName.setCellValueFactory(new PropertyValueFactory<>("lastname"));
-        columnEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
-        columnPassword.setCellValueFactory(new PropertyValueFactory<>("password"));
-        columnSubject.setCellValueFactory(new PropertyValueFactory<>("subject"));
-
-        try {
-            professors = getProfessors();
-            professorTable.setItems(professors);
-
-            String queryText = "SELECT subject FROM subject";
-            ResultSet response = getResponse(connection, queryText);
-            while (response.next()) {
-                subject.getItems().add(response.getString("subject"));
-                if (subject.getItems().size() == 1) {
-                    subject.setValue(subject.getItems().get(0));
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        update.setDisable(true);
     }
 
     private ObservableList<AdminProfessorModel> getProfessors() throws SQLException {
@@ -121,6 +200,18 @@ public class AdminProfessorController extends BaseController {
         ResultSet response = getResponse(connection, queryText);
         response.next();
         return response.getInt("id");
+    }
+
+    /**
+     * This method updates an item in an observable list
+     * @param list ObservableList item
+     * @param item Object in the ObservableList
+     */
+    private void updateItem(ObservableList<AdminProfessorModel> list, AdminProfessorModel item) {
+        int index = list.indexOf(item);
+        if (index >= 0) {
+            list.set(index, item);
+        }
     }
 
     @FXML
@@ -189,53 +280,6 @@ public class AdminProfessorController extends BaseController {
                 }
             }
         });
-    }
-
-    @FXML
-    void editUser() {
-        int index = professorTable.getSelectionModel().getSelectedIndex();
-        if (index == -1) {
-            alert(Alert.AlertType.ERROR, "Professor", "Select a column to edit");
-            return;
-        }
-        AdminProfessorModel professor = professors.get(index);
-        id = professor.getId();
-        credentialId = professor.getCredentialID();
-        firstName.setText(professor.getFirstname());
-        lastName.setText(professor.getLastname());
-        email.setText(professor.getEmail());
-        password.setText(professor.getPassword());
-        subject.setValue(professor.getSubject());
-        add.setDisable(true);
-        update.setDisable(false);
-        delete.setDisable(true);
-    }
-
-    @FXML
-    void updateUser() {
-        try {
-            String queryText = String.format(
-                    "UPDATE professor SET firstname = '%s', lastname = '%s', subject_id = %d WHERE (id = %d)",
-                    firstName.getText(), lastName.getText(), getSubjectId(subject.getValue()), id
-            );
-            executeQuery(connection, queryText);
-            queryText = String.format(
-                    "UPDATE credentials SET email = '%s', password = '%s' WHERE (id = %d)",
-                    email.getText(), password.getText(), credentialId
-            );
-            executeQuery(connection, queryText);
-            professors.clear();
-            professors.addAll(getProfessors());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        firstName.clear();
-        lastName.clear();
-        email.clear();
-        password.clear();
-        update.setDisable(true);
-        add.setDisable(false);
-        delete.setDisable(false);
     }
 
 }

@@ -35,6 +35,7 @@ public class SupervisorProfessorController extends BaseController {
 
     @FXML
     void initialize() {
+        preventColumnReordering(professorTable);
         serialNo.setCellFactory(indexCellFactory());
         columnFirstName.setCellValueFactory(new PropertyValueFactory<>("firstname"));
         columnLastName.setCellValueFactory(new PropertyValueFactory<>("lastname"));
@@ -51,7 +52,6 @@ public class SupervisorProfessorController extends BaseController {
         String queryText = "SELECT firstname, lastname, subject FROM professor INNER JOIN subject ON professor.subject_id = subject.id";
         ResultSet response = getResponse(connection, queryText);
         ObservableList<SupervisorProfessorModel> professors = FXCollections.observableArrayList();
-        ResultSet resultSet;
         while (response.next()) {
             professors.add(new SupervisorProfessorModel(
                     response.getString("firstname"), response.getString("lastname"),

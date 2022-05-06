@@ -103,4 +103,10 @@ public class SupervisorController extends BaseController {
         viewFactory.closeStage(stage);
         viewFactory.showLoginWindow();
     }
+
+    @FXML
+    void goBack() {
+        Stage stage = (Stage) profileMenu.getScene().getWindow();
+        viewFactory.goBack(stage);
+    }
 }

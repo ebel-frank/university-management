@@ -5,22 +5,19 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Objects;
 
 public class ViewFactory {
 
-    public final ArrayList<Stage> activeStages;
-
-    public ViewFactory() {
-        this.activeStages = new ArrayList<>();
-    }
+    private Stage welcomeStage = null;
 
     public void showLoginWindow() {
         BaseController controller = new LoginController(this, "login_application.fxml");
-        initStage(controller, "Login", 328, 424);
+        initStage(controller, "Login", 953, 503);
     }
 
     public void showAdminWindow(int type, int id) {
@@ -51,6 +48,12 @@ public class ViewFactory {
     }
 
     private void initStage(BaseController controller, String title, int width, int height) {
+        System.out.println();
+        Font.loadFont(
+                Objects.requireNonNull(getClass().getResourceAsStream("resources/Koulen.ttf")),
+                10
+        );
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource(controller.getFxmlName()));
         loader.setController(controller);
         Parent parent;
@@ -69,11 +72,13 @@ public class ViewFactory {
         stage.setMinHeight(height);
         stage.setResizable(false);
         stage.show();
-        activeStages.add(stage);
+        if (controller instanceof LoginController) {
+            welcomeStage = stage;
+        }
     }
 
     private void initStage(BaseController controller) {
-        initStage(controller, "University Management", 888, 586);
+        initStage(controller, "University Management", 953, 606);
     }
 
     public void updateStage(BaseController controller, Stage stage) {
@@ -93,12 +98,16 @@ public class ViewFactory {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(controller.getFxmlName()));
         loader.setController(controller);
         contentView = loader.load();
-        AnchorPane.setTopAnchor(contentView, 45.0);
+        AnchorPane.setTopAnchor(contentView, 41.0);
         mainView.getChildren().set(1, contentView);
     }
 
     public void closeStage(Stage stage) {
         stage.close();
-        activeStages.remove(stage);
+    }
+
+    public void goBack(Stage stage) {
+        closeStage(stage);
+        welcomeStage.show();
     }
 }

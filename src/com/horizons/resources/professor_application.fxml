@@ -7,44 +7,46 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TreeTableColumn?>
+<?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="568.0" minWidth="868.0" prefHeight="605.0" prefWidth="868.0" snapToPixel="false" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-    <Label fx:id="title" layoutX="135.0" layoutY="68.0" text="Professor James Heisenberg">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="606.0" prefWidth="953.0" snapToPixel="false" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <Label fx:id="title" layoutX="114.0" layoutY="60.0" text="Professor James Heisenberg" AnchorPane.topAnchor="60.0">
         <font>
           <Font name="System Bold" size="24.0" />
         </font>
     </Label>
-   <FontAwesomeIconView glyphName="BRIEFCASE" layoutX="136.0" layoutY="123.0" size="13" />
-    <Label fx:id="course" layoutX="157.0" layoutY="109.0" text="Mathematics">
+   <FontAwesomeIconView glyphName="BRIEFCASE" layoutX="115.0" layoutY="114.0" size="13" />
+    <Label fx:id="course" layoutX="136.0" layoutY="100.0" text="Mathematics">
       <font>
          <Font size="13.0" />
       </font></Label>
-    <FontAwesomeIconView glyphName="USER_ALT" layoutX="45.0" layoutY="153.0" size="100" AnchorPane.leftAnchor="30.0" />
-    <TabPane fx:id="studentTabPane" layoutX="13.0" layoutY="190.0" prefHeight="409.0" prefWidth="599.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="259.0" AnchorPane.topAnchor="181.0">
-        <Tab text="All">
-            <TableView fx:id="allYearsTable" editable="true" prefHeight="364.0" prefWidth="733.0">
-                <columns>
-               <TableColumn fx:id="serialNo" maxWidth="103.0" minWidth="12.0" prefWidth="32.0" resizable="false" text="S/N" />
-                    <TableColumn fx:id="columnName" maxWidth="300.0" minWidth="50.0" prefWidth="206.0" text="Name" />
-                    <TableColumn fx:id="columnSpecialty" maxWidth="113.0" minWidth="30.0" prefWidth="66.0" text="Specialty" />
-                    <TableColumn fx:id="columnExam" maxWidth="119.0" minWidth="30.0" prefWidth="79.0" resizable="false" text="Exam Grade" />
-                    <TableColumn fx:id="columnTp" maxWidth="121.0" minWidth="30.0" prefWidth="64.0" resizable="false" text="TP Grade" />
-                    <TableColumn fx:id="columnCc" maxWidth="110.0" minWidth="30.0" prefWidth="69.0" resizable="false" text="CC Grade" />
-                    <TableColumn fx:id="columnTotal" maxWidth="116.0" minWidth="30.0" prefWidth="83.0" resizable="false" text="Total Grade" />
-                </columns>
-            </TableView>
+    <FontAwesomeIconView glyphName="USER_ALT" layoutX="20.0" layoutY="128.57142639160156" size="80" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="60.0" />
+    <TabPane fx:id="studentTabPane" layoutX="13.0" layoutY="154.0" prefHeight="437.0" prefWidth="933.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="154.0">
+        <Tab fx:id="all" text="All">
+         <content>
+            <TreeTableView fx:id="allYearsTable" editable="true" prefHeight="200.0" prefWidth="200.0">
+              <columns>
+                  <TreeTableColumn fx:id="serialNo" prefWidth="45.0" text="S/N" visible="false" />
+                <TreeTableColumn fx:id="columnName" prefWidth="338.0" text="Name" />
+                <TreeTableColumn fx:id="columnSpecialty" prefWidth="119.0" text="Specialty" />
+                  <TreeTableColumn fx:id="columnExam" prefWidth="104.0" text="Exam Grade" />
+                  <TreeTableColumn fx:id="columnTp" prefWidth="105.0" text="TP Grade" />
+                  <TreeTableColumn fx:id="columnCc" prefWidth="88.0" text="CC Grade" />
+                  <TreeTableColumn fx:id="columnTotal" prefWidth="134.0" text="Total Grade" />
+              </columns>
+            </TreeTableView>
+         </content>
         </Tab>
         <Tab fx:id="tc" text="TC" />
         <Tab fx:id="sic" text="SIC" />
       <Tab fx:id="gme" text="GME" />
       <Tab fx:id="ge" text="GE" />
     </TabPane>
-    <AnchorPane layoutX="26.0" layoutY="14.0" prefHeight="41.0" prefWidth="828.0" styleClass="pane" stylesheets="@style.css" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <AnchorPane layoutX="26.0" layoutY="14.0" prefHeight="41.0" prefWidth="828.0" styleClass="pane" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <FontAwesomeIconView fx:id="profileIcon" glyphName="USER_CIRCLE" layoutX="760.0" layoutY="31.0" onMouseClicked="#showLogout" size="30" text="" AnchorPane.rightAnchor="32.0" />
         <Label fx:id="profileTitle" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="620.0" layoutY="11.0" onMouseClicked="#showLogout" prefHeight="20.0" prefWidth="132.0" text="Prof. Heisenberg" textAlignment="RIGHT" AnchorPane.rightAnchor="70.0">
             <font>
@@ -56,44 +58,35 @@
           <MenuItem fx:id="logout" mnemonicParsing="false" onAction="#logout" text="Log out" />
         </items>
       </MenuButton>
+      <Button layoutX="14.0" layoutY="7.0" mnemonicParsing="false" onAction="#goBack" prefHeight="27.0" prefWidth="47.0" styleClass="back-btn">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font>
+      </Button>
     </AnchorPane>
-   <Button fx:id="edit" layoutX="699.0" layoutY="383.0" mnemonicParsing="false" onAction="#editGrade" prefHeight="27.0" prefWidth="149.0" text="Edit" AnchorPane.rightAnchor="20.0">
+   <Label fx:id="examCoeffTitle" layoutX="719.0" layoutY="74.0" text="Exam">
+      <font>
+         <Font name="System Bold" size="12.0" />
+      </font></Label>
+   <Label fx:id="tpCoeffTitle" layoutX="805.0" layoutY="74.0" text="TP">
+      <font>
+         <Font name="System Bold" size="12.0" />
+      </font></Label>
+   <Label fx:id="ccCoeffTitle" layoutX="879.0" layoutY="74.0" text="CC">
+      <font>
+         <Font name="System Bold" size="12.0" />
+      </font></Label>
+   <TextField fx:id="examCoeff" disable="true" layoutX="755.0" layoutY="70.0" prefHeight="25.0" prefWidth="38.0" promptText="20%" />
+   <TextField fx:id="tpCoeff" disable="true" layoutX="828.0" layoutY="70.0" prefHeight="25.0" prefWidth="38.0" promptText="30%" />
+   <TextField fx:id="ccCoeff" disable="true" layoutX="903.0" layoutY="70.0" prefHeight="25.0" prefWidth="38.0" promptText="50%" />
+   <Button fx:id="editCoeff" layoutX="718.0" layoutY="106.0" mnemonicParsing="false" onAction="#editCoeff" prefHeight="27.0" prefWidth="106.0" styleClass="btn" text="Edit">
       <font>
          <Font size="13.0" />
       </font>
    </Button>
-   <Label fx:id="nameTitle" layoutX="623.0" layoutY="221.0" text="Name" />
-   <TextField fx:id="fullName" disable="true" layoutX="699.4921875" layoutY="217.0" AnchorPane.rightAnchor="20.0" />
-   <Label fx:id="examTitle" layoutX="623.0" layoutY="260.0" text="Exam Grade" />
-   <Label fx:id="tpTitle" layoutX="625.0" layoutY="302.0" text="TP Grade" />
-   <Label fx:id="ccTitle" layoutX="624.0" layoutY="344.0" text="CC Grade" />
-   <TextField fx:id="tpGrade" layoutX="699.0" layoutY="298.0" prefHeight="25.0" prefWidth="74.0" AnchorPane.rightAnchor="95.0" />
-   <TextField fx:id="ccGrade" layoutX="699.0" layoutY="339.0" prefHeight="25.0" prefWidth="74.0" AnchorPane.rightAnchor="95.0" />
-   <Button fx:id="update" layoutX="699.0" layoutY="425.0" mnemonicParsing="false" onAction="#updateGrade" prefHeight="27.0" prefWidth="149.0" text="Update" AnchorPane.rightAnchor="20.0">
+   <Button fx:id="updateCoeff" layoutX="835.0" layoutY="106.0" mnemonicParsing="false" onAction="#updateCoeff" prefHeight="27.0" prefWidth="106.0" styleClass="btn" text="Update">
       <font>
          <Font size="13.0" />
       </font>
    </Button>
-   <TextField fx:id="examGrade" layoutX="699.0" layoutY="256.0" prefHeight="25.0" prefWidth="74.0" AnchorPane.rightAnchor="95.0" />
-   <Label fx:id="examCoeffTitle" layoutX="624.0" layoutY="519.0" text="Exam" />
-   <Label fx:id="tpCoeffTitle" layoutX="711.0" layoutY="519.0" text="TP" />
-   <Label fx:id="ccCoeffTitle" layoutX="784.0" layoutY="519.0" text="CC" />
-   <TextField fx:id="examCoeff" disable="true" layoutX="662.0" layoutY="515.0" prefHeight="25.0" prefWidth="38.0" promptText="20%" />
-   <TextField fx:id="tpCoeff" disable="true" layoutX="735.0" layoutY="515.0" prefHeight="25.0" prefWidth="38.0" promptText="30%" />
-   <TextField fx:id="ccCoeff" disable="true" layoutX="810.0" layoutY="515.0" prefHeight="25.0" prefWidth="38.0" promptText="50%" />
-   <Button fx:id="editCoeff" layoutX="625.0" layoutY="551.0" mnemonicParsing="false" onAction="#editCoeff" prefHeight="27.0" prefWidth="106.0" text="Edit">
-      <font>
-         <Font size="13.0" />
-      </font>
-   </Button>
-   <Button fx:id="updateCoeff" layoutX="742.0" layoutY="551.0" mnemonicParsing="false" onAction="#updateCoeff" prefHeight="27.0" prefWidth="106.0" text="Update">
-      <font>
-         <Font size="13.0" />
-      </font>
-   </Button>
-   <Label fx:id="optionTitle" layoutX="702.0" layoutY="186.0" text="Options">
-      <font>
-         <Font name="System Bold" size="13.0" />
-      </font>
-   </Label>
 </AnchorPane>

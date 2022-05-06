@@ -4,13 +4,13 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="562.0" minWidth="868.0" prefHeight="562.0" prefWidth="868.0" snapToPixel="false" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-      <TableView fx:id="professorTable" editable="true" layoutX="10.0" layoutY="15.0" prefHeight="542.0" prefWidth="548.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="560.0" prefWidth="943.0" snapToPixel="false" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+      <TableView fx:id="professorTable" editable="true" layoutX="10.0" layoutY="15.0" prefHeight="540.0" prefWidth="697.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
           <columns>
-         <TableColumn fx:id="serialNo" minWidth="-1.0" prefWidth="36.0" resizable="false" text="S/N" />
-              <TableColumn fx:id="columnFirstName" minWidth="-1.0" prefWidth="148.0" resizable="false" text="First Name" />
-              <TableColumn fx:id="columnLastName" minWidth="-1.0" prefWidth="148.0" resizable="false" text="Last Name" />
-              <TableColumn fx:id="columnSubject" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="215.0" resizable="false" text="Subject" />
+         <TableColumn fx:id="serialNo" minWidth="-1.0" prefWidth="53.0" resizable="false" text="S/N" />
+              <TableColumn fx:id="columnFirstName" minWidth="-1.0" prefWidth="163.0" resizable="false" text="First Name" />
+              <TableColumn fx:id="columnLastName" minWidth="-1.0" prefWidth="175.0" resizable="false" text="Last Name" />
+              <TableColumn fx:id="columnSubject" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="305.0" resizable="false" text="Subject" />
           </columns>
       <columnResizePolicy>
          <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

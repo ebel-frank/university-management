@@ -8,50 +8,40 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="559.0" minWidth="868.0" prefHeight="562.0" prefWidth="868.0" snapToPixel="false" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-      <TableView fx:id="supervisorTable" editable="true" layoutY="55.0" prefHeight="542.0" prefWidth="599.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="560.0" prefWidth="943.0" snapToPixel="false" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+      <TableView fx:id="supervisorTable" editable="true" layoutY="55.0" prefHeight="586.0" prefWidth="675.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="260.0" AnchorPane.topAnchor="10.0">
           <columns>
-         <TableColumn fx:id="columnId" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="24.0" resizable="false" text="ID" />
-              <TableColumn fx:id="columnFirstName" minWidth="-1.0" prefWidth="152.0" resizable="false" text="First Name" />
-              <TableColumn fx:id="columnLastName" minWidth="-1.0" prefWidth="142.0" resizable="false" text="Last Name" />
-         <TableColumn fx:id="columnEmail" minWidth="-1.0" prefWidth="132.0" resizable="false" text="Email" />
-         <TableColumn fx:id="columnPassword" minWidth="-1.0" prefWidth="148.0" resizable="false" text="Password" />
+         <TableColumn fx:id="columnId" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="35.0" resizable="false" text="ID" />
+              <TableColumn fx:id="columnFirstName" minWidth="-1.0" prefWidth="157.0" resizable="false" text="First Name" />
+              <TableColumn fx:id="columnLastName" minWidth="-1.0" prefWidth="159.0" resizable="false" text="Last Name" />
+         <TableColumn fx:id="columnEmail" minWidth="-1.0" prefWidth="164.0" resizable="false" text="Email" />
+         <TableColumn fx:id="columnPassword" minWidth="-1.0" prefWidth="159.0" resizable="false" text="Password" />
           </columns>
       <columnResizePolicy>
          <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
       </columnResizePolicy>
       </TableView>
-   <Button fx:id="add" layoutX="709.0" layoutY="227.0" mnemonicParsing="false" onAction="#addUser" prefHeight="27.0" prefWidth="138.0" text="Add User" AnchorPane.rightAnchor="21.0">
+   <Button fx:id="add" layoutX="709.0" layoutY="227.0" mnemonicParsing="false" onAction="#addUser" prefHeight="27.0" prefWidth="138.0" styleClass="btn" text="Add User" AnchorPane.rightAnchor="21.0">
       <font>
          <Font size="13.0" />
       </font>
    </Button>
-   <Label fx:id="firstNameTitle" layoutX="622.0" layoutY="59.0" text="First name" />
+   <Label fx:id="firstNameTitle" layoutX="622.0" layoutY="59.0" text="First name" AnchorPane.rightAnchor="191.0" />
    <TextField fx:id="firstName" layoutX="709.0" layoutY="55.0" prefHeight="25.0" prefWidth="138.0" AnchorPane.rightAnchor="21.0" />
-   <Label fx:id="lastNameTitle" layoutX="622.0" layoutY="100.0" text="Last name" />
+   <Label fx:id="lastNameTitle" layoutX="707.0" layoutY="99.0" text="Last name" AnchorPane.rightAnchor="191.0" />
    <TextField fx:id="lastName" layoutX="709.0" layoutY="95.0" prefHeight="25.0" prefWidth="138.0" AnchorPane.rightAnchor="21.0" />
-   <Button fx:id="edit" layoutX="709.0" layoutY="272.0" mnemonicParsing="false" onAction="#editUser" prefHeight="27.0" prefWidth="138.0" text="Edit" AnchorPane.rightAnchor="21.0">
-      <font>
-         <Font size="13.0" />
-      </font>
-   </Button>
-   <Label fx:id="optionTitle" contentDisplay="RIGHT" layoutX="710.0" layoutY="15.0" prefHeight="20.0" prefWidth="128.0" text="Supervisor Details">
+   <Label fx:id="optionTitle" contentDisplay="RIGHT" layoutX="785.0" layoutY="15.0" prefHeight="20.0" prefWidth="128.0" text="Supervisor Details">
       <font>
          <Font name="System Bold" size="14.0" />
       </font>
    </Label>
-   <Button fx:id="update" layoutX="709.0" layoutY="320.0" mnemonicParsing="false" onAction="#updateUser" prefHeight="27.0" prefWidth="138.0" text="Update">
+   <Button fx:id="delete" layoutX="784.0" layoutY="274.0" mnemonicParsing="false" onAction="#deleteUser" prefHeight="27.0" prefWidth="138.0" styleClass="btn" text="Delete" AnchorPane.rightAnchor="21.0">
       <font>
          <Font size="13.0" />
       </font>
    </Button>
-   <Button fx:id="delete" layoutX="710.0" layoutY="367.0" mnemonicParsing="false" onAction="#deleteUser" prefHeight="27.0" prefWidth="138.0" text="Delete">
-      <font>
-         <Font size="13.0" />
-      </font>
-   </Button>
-   <TextField fx:id="email" layoutX="709.0" layoutY="138.0" prefHeight="25.0" prefWidth="138.0" />
-   <Label fx:id="emailTitle" layoutX="623.0" layoutY="142.0" text="Email" />
-   <Label fx:id="passwordTitle" layoutX="624.0" layoutY="183.0" text="Password" />
-   <TextField fx:id="password" layoutX="709.0" layoutY="179.0" prefHeight="25.0" prefWidth="138.0" />
+   <TextField fx:id="email" layoutX="709.0" layoutY="138.0" prefHeight="25.0" prefWidth="138.0" AnchorPane.rightAnchor="21.0" />
+   <Label fx:id="emailTitle" layoutX="707.0" layoutY="142.0" prefHeight="17.0" prefWidth="54.0" text="Email" AnchorPane.rightAnchor="191.0" />
+   <Label fx:id="passwordTitle" layoutX="709.0" layoutY="183.0" prefHeight="17.0" prefWidth="54.0" text="Password" AnchorPane.rightAnchor="191.0" />
+   <TextField fx:id="password" layoutX="709.0" layoutY="179.0" prefHeight="25.0" prefWidth="138.0" AnchorPane.rightAnchor="21.0" />
 </AnchorPane>

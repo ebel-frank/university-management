@@ -90,4 +90,10 @@ public class AdminController extends BaseController{
         viewFactory.showLoginWindow();
     }
 
+    @FXML
+    void goBack() {
+        Stage stage = (Stage) profileMenu.getScene().getWindow();
+        viewFactory.goBack(stage);
+    }
+
 }

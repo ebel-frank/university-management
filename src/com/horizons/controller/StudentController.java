@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static com.horizons.Utils.getResponse;
+import static com.horizons.Utils.preventColumnReordering;
 
 public class StudentController extends BaseController {
 
@@ -58,6 +59,7 @@ public class StudentController extends BaseController {
 
     @FXML
     public void initialize() {
+        preventColumnReordering(tableView);
         studentTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
             if (oldTab != null) {
                 oldTab.setContent(null);
@@ -158,6 +160,12 @@ public class StudentController extends BaseController {
         Stage stage = (Stage) profileMenu.getScene().getWindow();
         viewFactory.closeStage(stage);
         viewFactory.showLoginWindow();
+    }
+
+    @FXML
+    void goBack() {
+        Stage stage = (Stage) profileMenu.getScene().getWindow();
+        viewFactory.goBack(stage);
     }
 
 }
