@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -46,9 +47,12 @@ public class ViewFactory {
                 type, id);
         initStage(controller);
     }
+    
+    public void showTranscriptWindow(BaseController controller) {
+        initStage(controller, "Transcript", 529, 509);
+    }
 
     private void initStage(BaseController controller, String title, int width, int height) {
-        System.out.println();
         Font.loadFont(
                 Objects.requireNonNull(getClass().getResourceAsStream("resources/Koulen.ttf")),
                 10
@@ -67,14 +71,20 @@ public class ViewFactory {
         Stage stage = new Stage();
         stage.setScene(new Scene(parent));
         stage.setTitle(title);
+        
+        if (controller instanceof LoginController) {
+            welcomeStage = stage;
+        }
+        if (controller instanceof TranscriptController) {
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(((TranscriptController) controller).ownerStage);
+        }
 
         stage.setMinWidth(width);
         stage.setMinHeight(height);
         stage.setResizable(false);
         stage.show();
-        if (controller instanceof LoginController) {
-            welcomeStage = stage;
-        }
+        
     }
 
     private void initStage(BaseController controller) {

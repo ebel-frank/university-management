@@ -135,7 +135,7 @@ public class StudentController extends BaseController {
         while (response.next()) {
             GradesModel grade = new GradesModel(response.getString("subject"), response.getInt("exam"),
                     response.getInt("tp"), response.getInt("cc"), response.getInt("examCoeff"),
-                    response.getInt("tpCoeff"), response.getInt("tpCoeff"));
+                    response.getInt("tpCoeff"), response.getInt("ccCoeff"));
             switch (response.getInt("module")) {
                 case 1 -> {
                     module1.getChildren().add(new TreeItem<>(grade));
@@ -166,6 +166,14 @@ public class StudentController extends BaseController {
     void goBack() {
         Stage stage = (Stage) profileMenu.getScene().getWindow();
         viewFactory.goBack(stage);
+    }
+    
+    @FXML
+    void showTranscript() {
+        BaseController controller = new TranscriptController(
+                viewFactory, "transcript_application.fxml", title.getText(),
+                studentYear, specialty.getText().substring(11), studentId, (Stage) profileMenu.getScene().getWindow());
+        viewFactory.showTranscriptWindow(controller);
     }
 
 }
