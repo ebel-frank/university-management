@@ -39,6 +39,9 @@ public class StudentController extends BaseController {
 
     @FXML
     private TabPane studentTabPane;
+    
+    @FXML
+    private Button transcriptBtn;
 
     @FXML
     private Label profileTitle, title, year, specialty;
@@ -57,7 +60,7 @@ public class StudentController extends BaseController {
         this.studentId = id;
     }
 
-    @FXML
+	@FXML
     public void initialize() {
         preventColumnReordering(tableView);
         studentTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
@@ -85,6 +88,7 @@ public class StudentController extends BaseController {
             columnCc.setVisible(false);
             columnCc.setVisible(false);
             columnTotal.setVisible(false);
+            transcriptBtn.setVisible(false);
         }
 
         root = new TreeItem<>(new GradesModel("root"));

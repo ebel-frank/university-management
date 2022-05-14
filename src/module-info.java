@@ -6,6 +6,7 @@ module UniversityManagement {
     
     requires java.sql;
     requires de.jensd.fx.glyphs.fontawesome;
+	requires org.controlsfx.controls;
 	
     opens com.horizons.controller;
     opens com.horizons.model;
