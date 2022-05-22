@@ -48,6 +48,12 @@ public class SupervisorProfessorController extends BaseController {
         }
     }
 
+    /**
+     * This method returns the list of all the professors which will be used by the 
+     * table view in the SupervisorProfessorController.
+     * @return
+     * @throws SQLException
+     */
     private ObservableList<SupervisorProfessorModel> getProfessors() throws SQLException {
         String queryText = "SELECT firstname, lastname, subject FROM professor INNER JOIN subject ON professor.subject_id = subject.id";
         ResultSet response = getResponse(connection, queryText);

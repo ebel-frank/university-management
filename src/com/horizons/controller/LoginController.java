@@ -18,16 +18,19 @@ public class LoginController extends BaseController {
     @FXML
     private TextField email, password;
 
+    /**
+     * Constructor of the LoginController
+     * @param viewFactory 	The ViewFactory object which will manage the layout
+     * @param fxmlName		The fxml name of the controller
+     */
     public LoginController(ViewFactory viewFactory, String fxmlName) {
         super(viewFactory, fxmlName);
     }
 
-    @FXML
-    void initialize() {
-        email.setText("yash");
-        password.setText("12345");
-    }
-
+    /**
+     * The method gets the values entered by the user to check if it matches any value in the credentials table
+     * if it does match it sends the user to the welcome screen.
+     */
     @FXML
     protected void loginBtnAction() {
         if (fieldsAreValid()) {
@@ -81,6 +84,10 @@ public class LoginController extends BaseController {
         }
     }
 
+    /**
+     * This method validates our user inputs
+     * @return true if all inputs are valid and false otherwise
+     */
     private boolean fieldsAreValid() {
         if (email.getText().isEmpty()) {
             errLabel.setText("Input your email address");

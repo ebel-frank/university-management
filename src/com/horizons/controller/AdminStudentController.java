@@ -51,16 +51,25 @@ public class AdminStudentController extends BaseController {
     @FXML
     private Tab year1, year2;
 
+    /**
+     * Constructor of the AdminStudentController
+     * @param viewFactory	The ViewFactory object which will manage the layout
+     * @param fxmlName		The fxml name of this controller
+     * @param type			It tells our application to set up the interface of "View Information" or "Add Information"
+     */
     public AdminStudentController(ViewFactory viewFactory, String fxmlName, int type) {
         super(viewFactory, fxmlName);
         this.connection = AppDatabase.getConnection();
         this.type = type;
     }
 
+    /**
+     * This method is used to configure the variables
+     */
     @FXML
     void initialize() {
         preventColumnReordering(allYearsTable);
-        if (type == 0) {
+        if (type == 0) { 	// when type = 0 then we set up the interface for "View Information"
             optionTitle.setVisible(false);
             firstNameTitle.setVisible(false);
             lastNameTitle.setVisible(false);
@@ -79,7 +88,7 @@ public class AdminStudentController extends BaseController {
             delete.setVisible(false);
             AnchorPane.setRightAnchor(studentTabPane, 10.0);
 
-        } else {
+        } else {	// when type = 1 then we set up the interface for "Add Information"
             columnFirstName.setCellFactory(TextFieldTableCell.forTableColumn());
             columnLastName.setCellFactory(TextFieldTableCell.forTableColumn());
             columnEmail.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -87,6 +96,7 @@ public class AdminStudentController extends BaseController {
             columnSpecialty.setCellFactory(ChoiceBoxTableCell.forTableColumn("TC", "SIC","GE","GME"));
 
         }
+        // configure the tab pane to use one table for all it's tabs
         studentTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
             if (oldTab != null) {
                 oldTab.setContent(null);
@@ -154,7 +164,7 @@ public class AdminStudentController extends BaseController {
                 executeQuery(connection, queryText);
                 event.getRowValue().setEmail(event.getNewValue());
             } catch (SQLException e) {
-                // Operation failed
+                // Operation failed then we show the user an alert with the error message
                 alert(Alert.AlertType.ERROR, "Student", "Email already exists");
                 int index = students.indexOf(event.getRowValue());
                 if (index >= 0) {
@@ -228,9 +238,16 @@ public class AdminStudentController extends BaseController {
         year.setValue("1");
     }
 
+    
+    /**
+     * This method returns the list of students in the database
+     * @param year	the year of the students
+     * @return		An ObservableList of students
+     * @throws SQLException
+     */
     private ObservableList<AdminStudentModel> getStudents(int year) throws SQLException {
         String queryText;
-        if (year == 0) {
+        if (year == 0) {	// when year = 0, then we query all the student
             queryText = "SELECT * FROM student";
         } else {
             queryText = "SELECT * FROM student WHERE year = "+year;
@@ -250,10 +267,20 @@ public class AdminStudentController extends BaseController {
         return students;
     }
 
+    /**
+     * This is what is known as method overloading, I used it because 0 is a known value
+     * I don't want to type it every time I want to get all the students.
+     * @return
+     * @throws SQLException
+     */
     private ObservableList<AdminStudentModel> getStudents() throws SQLException {
         return getStudents(0);
     }
 
+    /**
+     * This adds a student to the database. It first adds the students email and password to
+     * the information table, then it adds the student details to the student table.
+     */
     @FXML
     void addUser() {
         if (firstName.getText().isEmpty() | lastName.getText().isEmpty() | email.getText().isEmpty() | password.getText().isEmpty()) {
@@ -287,6 +314,9 @@ public class AdminStudentController extends BaseController {
         password.clear();
     }
 
+    /**
+     * This deletes a student from the database
+     */
     @FXML
     void deleteUser() {
         int index = allYearsTable.getSelectionModel().getSelectedIndex();

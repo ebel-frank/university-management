@@ -41,6 +41,12 @@ public class AdminSupervisorController extends BaseController {
     @FXML
     private TextField firstName, lastName, email, password;
 
+    /**
+     * Constructor of the AdminSupervisorController
+     * @param viewFactory	The ViewFactory object which will manage the layout
+     * @param fxmlName		The fxml name of this controller
+     * @param type			It tells our application to set up the interface of "View Information" or "Add Information"
+     */
     public AdminSupervisorController(ViewFactory viewFactory, String fxmlName, int type) {
         super(viewFactory, fxmlName);
         this.connection = AppDatabase.getConnection();
@@ -50,7 +56,7 @@ public class AdminSupervisorController extends BaseController {
     @FXML
     void initialize() {
         preventColumnReordering(supervisorTable);
-        if (type == 0) {
+        if (type == 0) {	// when type = 0 then we set up the interface for "View Information"
             optionTitle.setVisible(false);
             firstNameTitle.setVisible(false);
             lastNameTitle.setVisible(false);
@@ -64,7 +70,7 @@ public class AdminSupervisorController extends BaseController {
             add.setVisible(false);
             delete.setVisible(false);
             AnchorPane.setRightAnchor(supervisorTable, 10.0);
-        } else {
+        } else {	// when type = 1 then we set up the interface for "Add Information"
             columnFirstName.setCellFactory(TextFieldTableCell.forTableColumn());
             columnLastName.setCellFactory(TextFieldTableCell.forTableColumn());
             columnEmail.setCellFactory(TextFieldTableCell.forTableColumn());

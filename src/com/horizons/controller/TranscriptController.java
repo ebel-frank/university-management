@@ -51,8 +51,12 @@ public class TranscriptController extends BaseController {
 
     }
 
+    /**
+     * This method is used to configure the variables
+     */
     @FXML
     void initialize() {
+    	// set the details of the student
         nameTitle.setText("Name: " + fullname);
         yearTitle.setText("Year: " + year);
         specialtyTitle.setText("Specialty: " + specialty);
@@ -67,6 +71,7 @@ public class TranscriptController extends BaseController {
         });
         semester.setValue(semester.getItems().get(0));
 
+        // configures the spreadsheet table
         table.setEditable(false);
         table.setShowColumnHeader(false);
         table.setShowRowHeader(false);
@@ -75,6 +80,12 @@ public class TranscriptController extends BaseController {
         table.getColumns().get(4).setPrefWidth(80);
     }
 
+    /**
+     * This method gets the grades of the student using the student id, it also
+     * builds the spreadsheet to show the student results. 
+     * @param index	This represents the position in the semester choice box
+     * @return
+     */
     private GridBase getGrades(int index) {
         int rowCount = 10;
         int columnCount = 5;
@@ -91,6 +102,7 @@ public class TranscriptController extends BaseController {
         list.add(SpreadsheetCellType.STRING.createCell(0, 4, 1, 1, "Situation"));
         rows.add(list);
 
+        // set up the contents of the spreadsheet
         String queryText = "SELECT subject, module, ((exam * examCoeff * 0.01) + (tp * tpCoeff * 0.01) + (cc * ccCoeff * 0.01)) as total " +
                 "FROM grades INNER JOIN courses ON courses.id = grades.courses_id INNER JOIN subject ON subject.id = courses.subject_id " +
                 "INNER JOIN professor ON subject.id = professor.subject_id WHERE student_id = " + studentId + " AND semester = " + (index + (2 * year) - 1);
@@ -190,11 +202,12 @@ public class TranscriptController extends BaseController {
 
         grid.setRows(rows);
         grid.spanColumn(3, rows.size()-1, 0);
-//        grid.spanRow(2, 3, 0);
-//        grid.spanRow(3, 5, 0);
         return grid;
     }
 
+    /**
+     * This method prints the screen and stores it in a PDF
+     */
     @FXML
     void download() {
         PrinterJob job = PrinterJob.createPrinterJob();

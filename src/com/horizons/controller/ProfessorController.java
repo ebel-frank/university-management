@@ -69,8 +69,12 @@ public class ProfessorController extends BaseController {
         this.professorId = id;
     }
 
+    /**
+     * This method is used to configure the variables
+     */
     @FXML
     public void initialize() {
+    	// set up the allYearsTable and it's columns
         preventColumnReordering(allYearsTable);
         allYearsTable.setRowFactory(getTreeTableViewRowFactory(allYearsTable));
         studentTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
@@ -108,8 +112,10 @@ public class ProfessorController extends BaseController {
         });
         columnName.setCellValueFactory(param -> param.getValue().getValue().fullnameProperty());
         columnSpecialty.setCellValueFactory(param -> param.getValue().getValue().specialtyProperty());
-        if (type==1) {      // else type=1 update as the Grade screen
+        if (type==1) {      // when type=1 update as the Grade screen
             columnExam.setCellValueFactory(param -> param.getValue().getValue().examGradeProperty());
+            // Create a custom cell factory that allows only a child tree item to be edited and not it's parent
+            // this means that the drop down which has no value will not be editable but it's children will be editable.
             columnExam.setCellFactory(c -> new TextFieldTreeTableCell<>(new NumberStringConverter()) {
                 @Override
                 public void startEdit() {
@@ -118,6 +124,7 @@ public class ProfessorController extends BaseController {
                 }
             });
             columnExam.setOnEditCommit(event -> {
+            	// update the value of the examGrade in the database when a change is made
                 String queryText = String.format(
                         "UPDATE grades SET exam = %d WHERE (id = %d)",
                         event.getNewValue().intValue(), event.getRowValue().getValue().getId()
@@ -131,6 +138,7 @@ public class ProfessorController extends BaseController {
                 }
             });
             columnTp.setCellValueFactory(param -> param.getValue().getValue().tpGradeProperty());
+            // Create a custom cell factory that allows only a child tree item to be edited and not it's parent
             columnTp.setCellFactory(c -> new TextFieldTreeTableCell<>(new NumberStringConverter()) {
                 @Override
                 public void startEdit() {
@@ -139,6 +147,7 @@ public class ProfessorController extends BaseController {
                 }
             });
             columnTp.setOnEditCommit(event -> {
+            	// update the value of the tPGrade in the database when a change is made
                 String queryText = String.format(
                         "UPDATE grades SET tp = %d WHERE (id = %d)",
                         event.getNewValue().intValue(), event.getRowValue().getValue().getId()
@@ -153,6 +162,7 @@ public class ProfessorController extends BaseController {
                 }
             });
             columnCc.setCellValueFactory(param -> param.getValue().getValue().ccGradeProperty());
+            // Create a custom cell factory that allows only a child tree item to be edited and not it's parent
             columnCc.setCellFactory(c -> new TextFieldTreeTableCell<>(new NumberStringConverter()) {
                 @Override
                 public void startEdit() {
@@ -161,6 +171,7 @@ public class ProfessorController extends BaseController {
                 }
             });
             columnCc.setOnEditCommit(event -> {
+            	// update the value of the cCGrade in the database when a change is made
                 String queryText = String.format(
                         "UPDATE grades SET cc = %d WHERE (id = %d)",
                         event.getNewValue().intValue(), event.getRowValue().getValue().getId()
@@ -219,6 +230,9 @@ public class ProfessorController extends BaseController {
         updateCoeff.setDisable(true);
     }
 
+    /**
+     * This ensures that the specialty tabs available for a professor are only from the specialty he teaches
+     */
     private void setTabs() {
         String queryText = "SELECT specialty FROM professor INNER JOIN courses ON courses.subject_id = professor.subject_id " +
                 "WHERE professor.subject_id = "+subjectId;
@@ -261,6 +275,11 @@ public class ProfessorController extends BaseController {
         }
     }
 
+    /**
+     * This adds the students to their respective semester tree item
+     * @param specialty 
+     * @throws SQLException
+     */
     private void getStudents(int specialty) throws SQLException {
         String queryText = "SELECT grades.id, firstname, lastname, student.specialty, exam, tp, cc, semester FROM courses " +
                 "INNER JOIN grades ON grades.courses_id = courses.id INNER JOIN student ON student.id = grades.student_id " +
@@ -303,6 +322,10 @@ public class ProfessorController extends BaseController {
         root.getChildren().removeIf(studentModelTreeItem -> studentModelTreeItem.getChildren().size() == 0);
     }
 
+    /**
+     * This adds all the semesters as a child to the root tree item
+     * @param specialty
+     */
     private void getSemesters(int specialty) {
         root.getChildren().clear();
         if (type == 0) {
@@ -318,11 +341,18 @@ public class ProfessorController extends BaseController {
         }
     }
 
+    /**
+     * @return	the details of the professor using the professor id
+     * @throws SQLException
+     */
     private ResultSet getProfessorDetails() throws SQLException {
         String queryText = "SELECT * FROM professor INNER JOIN subject ON professor.subject_id = subject.id WHERE credentials_id = "+professorId;
         return getResponse(connection, queryText);
     }
 
+    /**
+     * This method enables the text fields to be edited by the professor
+     */
     @FXML
     void editCoeff() {
         examCoeff.setDisable(false);
@@ -332,6 +362,9 @@ public class ProfessorController extends BaseController {
         editCoeff.setDisable(true);
     }
 
+    /**
+     * This method updates the coefficient of the professor using the professor id
+     */
     @FXML
     void updateCoeff() {
         try {
@@ -360,11 +393,17 @@ public class ProfessorController extends BaseController {
         editCoeff.setDisable(false);
     }
 
+    /**
+     * This shows the logout dropdown-button 
+     */
     @FXML
     protected void showLogout() {
         profileMenu.show();
     }
 
+    /**
+     * Logs the user out of the application
+     */
     @FXML
     void logout() {
         Stage stage = (Stage) profileMenu.getScene().getWindow();
@@ -372,6 +411,9 @@ public class ProfessorController extends BaseController {
         viewFactory.showLoginWindow();
     }
 
+    /**
+     * Takes the user back to the welcome screen
+     */
     @FXML
     void goBack() {
         Stage stage = (Stage) profileMenu.getScene().getWindow();

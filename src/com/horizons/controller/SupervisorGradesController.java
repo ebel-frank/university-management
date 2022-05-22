@@ -1,9 +1,9 @@
-package com.horizons.schoolmanagement.controller;
+package com.horizons.controller;
 
-import com.horizons.schoolmanagement.ViewFactory;
-import com.horizons.schoolmanagement.database.AppDatabase;
-import com.horizons.schoolmanagement.model.SupervisorGradesModel;
-import com.horizons.schoolmanagement.model.SupervisorModuleModel;
+import com.horizons.ViewFactory;
+import com.horizons.database.AppDatabase;
+import com.horizons.model.SupervisorGradesModel;
+import com.horizons.model.SupervisorModuleModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -11,14 +11,13 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Line;
 import javafx.util.converter.IntegerStringConverter;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static com.horizons.schoolmanagement.Utils.*;
+import static com.horizons.Utils.*;
 
 public class SupervisorGradesController extends BaseController {
 

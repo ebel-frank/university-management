@@ -3,6 +3,9 @@ package com.horizons.model;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
+/**
+ * This is a data class to hold the data of student grades in the StudentController
+ */
 public class StudentModel {
     private int id;
     private SimpleStringProperty fullname;

@@ -54,7 +54,9 @@ public class SupervisorController extends BaseController {
                 e.printStackTrace();
             }
 
+            // add a listener to the toggle group
             user.selectedToggleProperty().addListener((observableValue, oldToggle, newToggle) -> {
+            	// This block of code is executed any time the user clicks on a different radio button
                 try {
                     BaseController controller;
                     if (((RadioButton) newToggle).getText().equals("All Students")) {
@@ -87,16 +89,26 @@ public class SupervisorController extends BaseController {
         }
     }
 
+    /**
+     * @return	the details of the supervisor 
+     * @throws SQLException
+     */
     private ResultSet getSupervisorDetails() throws SQLException {
         String queryText = "SELECT * FROM supervisor WHERE credentials_id = "+supervisorId;
         return getResponse(connection, queryText);
     }
 
+    /**
+     * This shows the logout dropdown-button 
+     */
     @FXML
     void showLogout() {
         profileMenu.show();
     }
 
+    /**
+     * Logs the user out of the application
+     */
     @FXML
     void logout() {
         Stage stage = (Stage) profileMenu.getScene().getWindow();
@@ -104,6 +116,9 @@ public class SupervisorController extends BaseController {
         viewFactory.showLoginWindow();
     }
 
+    /**
+     * Takes the user back to the welcome screen
+     */
     @FXML
     void goBack() {
         Stage stage = (Stage) profileMenu.getScene().getWindow();

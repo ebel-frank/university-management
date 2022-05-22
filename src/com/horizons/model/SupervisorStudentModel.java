@@ -1,5 +1,8 @@
 package com.horizons.model;
 
+/**
+ * This is a data class to hold the data of students in the SupervisorStudentController
+ */
 public class SupervisorStudentModel {
     private int id;
     private String firstname;

@@ -22,12 +22,20 @@ public class WelcomeController extends BaseController {
         this.optionText2 = optionText2;
     }
 
+    /**
+     * This method is used to configure the variables
+     */
     @FXML
     public void initialize() {
         option1.setText(optionText1);
         option2.setText(optionText2);
     }
 
+    /**
+     * This method is called by the two buttons in the welcome screen. It directs
+     * the user to the proper interface.
+     * @param event
+     */
     @FXML
     void options(ActionEvent event) {
         int type;

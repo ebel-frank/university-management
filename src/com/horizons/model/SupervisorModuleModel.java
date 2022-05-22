@@ -1,5 +1,8 @@
-package com.horizons.schoolmanagement.model;
+package com.horizons.model;
 
+/**
+ * This is a data class to hold the data of module grades of students in the SupervisorGradesController
+ */
 public class SupervisorModuleModel {
     private String firstname;
     private String lastname;

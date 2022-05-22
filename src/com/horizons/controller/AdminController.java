@@ -34,6 +34,13 @@ public class AdminController extends BaseController{
     @FXML
     private ToggleGroup user;
 
+    /**
+     * Constructor of the AdminController
+     * @param viewFactory	The ViewFactory object which will manage the layout
+     * @param fxmlName		The fxml name of the controller
+     * @param type			It tells our application to set up the interface of "View Information" or "Add Information"
+     * @param id			The administrator Id
+     */
     public AdminController(ViewFactory viewFactory, String fxmlName, int type, int id) {
         super(viewFactory, fxmlName);
         this.connection = AppDatabase.getConnection();
@@ -41,6 +48,9 @@ public class AdminController extends BaseController{
         this.adminId = id;
     }
 
+    /**
+     * This method is used to configure the variables
+     */
     @FXML
     public void initialize() {
         try {
@@ -57,8 +67,10 @@ public class AdminController extends BaseController{
             e.printStackTrace();
         }
 
+        // add a listener to the toggle group
         user.selectedToggleProperty().addListener((observableValue, oldToggle, newToggle) -> {
-            try {
+            // This block of code is executed any time the user clicks on a different radio button
+        	try {
                 BaseController controller;
                 switch (((RadioButton) newToggle).getText()) {
                     case "Students" -> controller = new AdminStudentController(viewFactory, "admin_student.fxml", type);
@@ -73,16 +85,26 @@ public class AdminController extends BaseController{
         });
     }
 
+    /**
+     * @return the details of the Administrator e.g firstname, lastname 
+     * @throws SQLException
+     */
     private ResultSet getAdminDetails() throws SQLException {
         String queryText = "SELECT * FROM administrator WHERE credentials_id = '"+adminId+"'";
         return getResponse(connection, queryText);
     }
 
+    /**
+     * shows the logout dropdown-button
+     */
     @FXML
     void showLogout() {
         profileMenu.show();
     }
 
+    /**
+     * Logs the user out of the application
+     */
     @FXML
     void logout() {
         Stage stage = (Stage) profileMenu.getScene().getWindow();
@@ -90,6 +112,9 @@ public class AdminController extends BaseController{
         viewFactory.showLoginWindow();
     }
 
+    /**
+     * Takes the user back to the welcome screen
+     */
     @FXML
     void goBack() {
         Stage stage = (Stage) profileMenu.getScene().getWindow();
