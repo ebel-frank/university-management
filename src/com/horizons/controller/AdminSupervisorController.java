@@ -1,6 +1,5 @@
 package com.horizons.controller;
 
-import com.horizons.ViewFactory;
 import com.horizons.database.AppDatabase;
 import com.horizons.model.AdminSupervisorModel;
 import javafx.collections.FXCollections;
@@ -19,12 +18,10 @@ import java.util.Optional;
 import static com.horizons.Utils.*;
 import static com.horizons.Utils.alert;
 
-public class AdminSupervisorController extends BaseController {
+public class AdminSupervisorController {
 
-    private final Connection connection;
+    private  Connection connection;
     private ObservableList<AdminSupervisorModel> supervisors;
-    private int id, credentialId;
-    private final int type;
 
     @FXML
     private Button add, delete;
@@ -41,16 +38,15 @@ public class AdminSupervisorController extends BaseController {
     @FXML
     private TextField firstName, lastName, email, password;
 
-    public AdminSupervisorController(ViewFactory viewFactory, String fxmlName, int type) {
-        super(viewFactory, fxmlName);
-        this.connection = AppDatabase.getConnection();
-        this.type = type;
-    }
-
-    @FXML
-    void initialize() {
+    /**
+     * This method is used to set up the variables
+     * @param type	It tells our application to set up the interface of "View Information" or "Add Information"
+     */
+    public void setUpVariables(int type) {
+    	this.connection = AppDatabase.getConnection();
+    	
         preventColumnReordering(supervisorTable);
-        if (type == 0) {
+        if (type == 0) {	// when type = 0 then we set up the interface for "View Information"
             optionTitle.setVisible(false);
             firstNameTitle.setVisible(false);
             lastNameTitle.setVisible(false);
@@ -64,7 +60,7 @@ public class AdminSupervisorController extends BaseController {
             add.setVisible(false);
             delete.setVisible(false);
             AnchorPane.setRightAnchor(supervisorTable, 10.0);
-        } else {
+        } else {	// when type = 1 then we set up the interface for "Add Information"
             columnFirstName.setCellFactory(TextFieldTableCell.forTableColumn());
             columnLastName.setCellFactory(TextFieldTableCell.forTableColumn());
             columnEmail.setCellFactory(TextFieldTableCell.forTableColumn());

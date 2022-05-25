@@ -6,10 +6,15 @@ import javafx.stage.Stage;
 public class Launcher extends Application {
     @Override
     public void start(Stage stage) {
-        ViewFactory viewFactory = new ViewFactory();
-        viewFactory.showLoginWindow();
+    	// get an instance of the FxmlMethods class and show the login screen
+        FxmlMethods fxmlMethods = FxmlMethods.getInstance();
+        fxmlMethods.showLoginWindow();
     }
 
+    /**
+     * This is the entry point of this application
+     * @param args
+     */
     public static void main(String[] args) {
         launch(args);
     }

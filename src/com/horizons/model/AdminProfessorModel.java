@@ -1,5 +1,8 @@
 package com.horizons.model;
 
+/**
+ * This is a data class to hold the data of professors in the AdminProfessorController
+ */
 public class AdminProfessorModel {
 
     private int id;

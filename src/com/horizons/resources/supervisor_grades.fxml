@@ -8,16 +8,14 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="560.0" prefWidth="943.0" snapToPixel="false" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="560.0" prefWidth="943.0" snapToPixel="false" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.horizons.controller.SupervisorGradesController">
    <Label fx:id="resultTitle" layoutX="12.0" layoutY="57.0" text="Results" visible="false" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="20.0">
       <font>
          <Font size="18.0" />
       </font>
    </Label>
-   <ChoiceBox fx:id="course" layoutX="707.0" layoutY="20.0" prefWidth="150.0" visible="false" AnchorPane.topAnchor="20.0" />
    <TableView fx:id="coursesTableView" editable="true" layoutX="27.0" layoutY="53.0" prefHeight="497.0" prefWidth="913.0" visible="false" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="53.0">
      <columns>
          <TableColumn fx:id="serialNo" prefWidth="45.0" resizable="false" text="S/N" />
@@ -76,5 +74,37 @@
          <Font size="16.0" />
       </font>
    </Label>
-   <Line fx:id="divider" endX="-76.0" layoutX="964.0" layoutY="32.0" rotate="90.0" startX="-100.0" stroke="#8a8a8a" visible="false" />
+   <TableView fx:id="moduleTableView" editable="true" layoutX="37.0" layoutY="63.0" prefHeight="422.0" prefWidth="913.0" visible="false" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="20.0">
+      <columns>
+         <TableColumn fx:id="serialNo1" prefWidth="45.0" resizable="false" text="S/N" />
+         <TableColumn fx:id="columnFirstName1" prefWidth="108.0" resizable="false" text="First Name" />
+         <TableColumn fx:id="columnLastName1" prefWidth="120.0" resizable="false" text="Last Name" />
+         <TableColumn fx:id="columnModule1" resizable="false" text="Module 1" />
+         <TableColumn fx:id="module1Situation" prefWidth="79.0" resizable="false" text="Situation" />
+         <TableColumn fx:id="columnModule2" prefWidth="78.0" resizable="false" text="Module 2" />
+         <TableColumn fx:id="module2Situation" prefWidth="76.0" resizable="false" text="Situation" />
+         <TableColumn fx:id="columnModule3" prefWidth="79.0" resizable="false" text="Module 3" />
+         <TableColumn fx:id="module3Situation" prefWidth="79.0" resizable="false" text="Situation" />
+         <TableColumn fx:id="columnSemester" prefWidth="89.0" resizable="false" text="Semester" />
+         <TableColumn fx:id="semesterSituation" prefWidth="79.0" resizable="false" text="Situation" />
+      </columns>
+      <columnResizePolicy>
+         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+      </columnResizePolicy>
+   </TableView>
+   <Label fx:id="module1Text" layoutX="14.0" layoutY="53.0" text="Module 1: Algebra, Analysis" visible="false" AnchorPane.leftAnchor="10.0">
+      <font>
+         <Font size="13.0" />
+      </font>
+   </Label>
+   <Label fx:id="module2Text" layoutX="10.0" layoutY="76.0" text="Module 2: Chemistry, Optics" visible="false">
+      <font>
+         <Font size="13.0" />
+      </font>
+   </Label>
+   <Label fx:id="module3Text" layoutX="10.0" layoutY="100.0" text="Module 3: French, English, Spanish" visible="false">
+      <font>
+         <Font size="13.0" />
+      </font>
+   </Label>
 </AnchorPane>

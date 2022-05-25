@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="606.0" prefWidth="953.0" snapToPixel="false" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="606.0" prefWidth="953.0" snapToPixel="false" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.horizons.controller.ProfessorController">
     <Label fx:id="title" layoutX="114.0" layoutY="60.0" text="Professor James Heisenberg" AnchorPane.topAnchor="60.0">
         <font>
           <Font name="System Bold" size="24.0" />

@@ -1,5 +1,8 @@
 package com.horizons.model;
 
+/**
+ * This is a data class to hold the data of supervisors in the AdminSupervisorController
+ */
 public class AdminSupervisorModel {
 
     private int id;

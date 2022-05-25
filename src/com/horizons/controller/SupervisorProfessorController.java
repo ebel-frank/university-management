@@ -1,6 +1,5 @@
 package com.horizons.controller;
 
-import com.horizons.ViewFactory;
 import com.horizons.database.AppDatabase;
 import com.horizons.model.SupervisorProfessorModel;
 import javafx.collections.FXCollections;
@@ -15,9 +14,9 @@ import java.sql.SQLException;
 
 import static com.horizons.Utils.*;
 
-public class SupervisorProfessorController extends BaseController {
+public class SupervisorProfessorController {
 
-    private final Connection connection;
+    private Connection connection;
 
     @FXML
     private TableView<SupervisorProfessorModel> professorTable;
@@ -28,13 +27,9 @@ public class SupervisorProfessorController extends BaseController {
     @FXML
     private TableColumn<?, Void> serialNo;
 
-    public SupervisorProfessorController(ViewFactory viewFactory, String fxmlName) {
-        super(viewFactory, fxmlName);
-        this.connection = AppDatabase.getConnection();
-    }
-
-    @FXML
-    void initialize() {
+    public void setUpVariables() {
+    	this.connection = AppDatabase.getConnection();
+    	
         preventColumnReordering(professorTable);
         serialNo.setCellFactory(indexCellFactory());
         columnFirstName.setCellValueFactory(new PropertyValueFactory<>("firstname"));
@@ -48,6 +43,12 @@ public class SupervisorProfessorController extends BaseController {
         }
     }
 
+    /**
+     * This method returns the list of all the professors which will be used by the 
+     * table view in the SupervisorProfessorController.
+     * @return
+     * @throws SQLException
+     */
     private ObservableList<SupervisorProfessorModel> getProfessors() throws SQLException {
         String queryText = "SELECT firstname, lastname, subject FROM professor INNER JOIN subject ON professor.subject_id = subject.id";
         ResultSet response = getResponse(connection, queryText);

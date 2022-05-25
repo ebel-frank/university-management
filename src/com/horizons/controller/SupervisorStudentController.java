@@ -1,8 +1,6 @@
 package com.horizons.controller;
 
-import com.horizons.ViewFactory;
 import com.horizons.database.AppDatabase;
-import com.horizons.model.AdminStudentModel;
 import com.horizons.model.SupervisorStudentModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,9 +17,9 @@ import java.util.Objects;
 
 import static com.horizons.Utils.*;
 
-public class SupervisorStudentController extends BaseController {
+public class SupervisorStudentController {
 
-    private final Connection connection;
+    private Connection connection;
     private ObservableList<SupervisorStudentModel> students;
 
     @FXML
@@ -33,13 +31,11 @@ public class SupervisorStudentController extends BaseController {
     @FXML
     private TableColumn<?, Void> serialNo;
 
-    public SupervisorStudentController(ViewFactory viewFactory, String fxmlName) {
-        super(viewFactory, fxmlName);
-        this.connection = AppDatabase.getConnection();
-    }
 
-    @FXML
-    void initialize() {
+    public void setUpVariables() {
+    	this.connection = AppDatabase.getConnection();
+    	
+    	// set up the allStudentTable and it's column
         preventColumnReordering(allStudentTable);
         serialNo.setCellFactory(indexCellFactory());
         columnFirstName.setCellValueFactory(new PropertyValueFactory<>("firstname"));
@@ -48,6 +44,7 @@ public class SupervisorStudentController extends BaseController {
         columnSpecialty.setCellValueFactory(new PropertyValueFactory<>("specialty"));
         columnSpecialty.setCellFactory(ChoiceBoxTableCell.forTableColumn("TC", "SIC","GE","GME"));
         columnSpecialty.setOnEditCommit(event -> {
+        	// update the value of the specialty in the database when a change is made
             int year = 2;
             String newValue = event.getNewValue();
             if (!Objects.equals(newValue, event.getRowValue().getSpecialty())) {
@@ -63,6 +60,8 @@ public class SupervisorStudentController extends BaseController {
                 new Thread(new Task<Void>() {
                     @Override
                     protected Void call() throws Exception {
+                    	// registering and unregistering a student for his/her course can take quite some
+                    	// time, so it's placed in a thread, so that it dose'nt freeze the UI
                         executeQuery(connection, queryText);
 
                         unregisterStudentForCourses(connection, event.getRowValue().getId());
@@ -86,6 +85,12 @@ public class SupervisorStudentController extends BaseController {
 
     }
 
+    /**
+     * This method returns the list of all the student which will be used by the 
+     * table view in the SupervisorStudentController.
+     * @return
+     * @throws SQLException
+     */
     private ObservableList<SupervisorStudentModel> getStudents() throws SQLException {
         String queryText = "SELECT * FROM student ORDER BY year ASC";
         ResultSet response = getResponse(connection, queryText);

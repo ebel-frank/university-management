@@ -1,11 +1,7 @@
 package com.horizons.controller;
 
-import com.horizons.ViewFactory;
 import com.horizons.database.AppDatabase;
 import com.horizons.model.AdminProfessorModel;
-import com.horizons.model.AdminStudentModel;
-import com.horizons.model.AdminSupervisorModel;
-import com.horizons.model.StudentModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -14,8 +10,6 @@ import javafx.scene.control.cell.ChoiceBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
-import javafx.util.converter.IntegerStringConverter;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,11 +21,10 @@ import java.util.Optional;
 import static com.horizons.Utils.*;
 import static com.horizons.Utils.alert;
 
-public class AdminProfessorController extends BaseController {
+public class AdminProfessorController {
 
-    private final Connection connection;
+    private Connection connection;
     private ObservableList<AdminProfessorModel> professors;
-    private final int type;
     private final List<String> subjects = new ArrayList<>();
 
     @FXML
@@ -52,18 +45,19 @@ public class AdminProfessorController extends BaseController {
     @FXML
     private ChoiceBox<String> subject;
 
-    public AdminProfessorController(ViewFactory viewFactory, String fxmlName, int type) {
-        super(viewFactory, fxmlName);
-        this.connection = AppDatabase.getConnection();
-        this.type = type;
-    }
-
-    @FXML
-    void initialize() {
+    /**
+     * This method is used to configure the variables
+     * @param type	It tells our application to set up the interface of "View Information" or "Add Information"
+     */
+    public void setUpVariables(int type) {
+    	this.connection = AppDatabase.getConnection();
+    	
+    	// set up the professorTable and it's columns
         preventColumnReordering(professorTable);
         columnId.setCellValueFactory(new PropertyValueFactory<>("id"));
         columnFirstName.setCellValueFactory(new PropertyValueFactory<>("firstname"));
         columnFirstName.setOnEditCommit(event -> {
+        	// update the value of the firstname in the database when a change is made
             String queryText = String.format(
                     "UPDATE professor SET firstname = '%s' WHERE (id = %d)",
                     event.getNewValue(), event.getRowValue().getId()
@@ -77,6 +71,7 @@ public class AdminProfessorController extends BaseController {
         });
         columnLastName.setCellValueFactory(new PropertyValueFactory<>("lastname"));
         columnLastName.setOnEditCommit(event -> {
+        	// update the value of the lastname in the database when a change is made
             String queryText = String.format(
                     "UPDATE professor SET lastname = '%s' WHERE (id = %d)",
                     event.getNewValue(), event.getRowValue().getId()
@@ -90,6 +85,7 @@ public class AdminProfessorController extends BaseController {
         });
         columnEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
         columnEmail.setOnEditCommit(event -> {
+        	// update the value of the email in the database when a change is made
             String queryText = String.format(
                     "UPDATE credentials SET email = '%s' WHERE (id = %d)",
                     event.getNewValue(), event.getRowValue().getCredentialID()
@@ -98,7 +94,7 @@ public class AdminProfessorController extends BaseController {
                 executeQuery(connection, queryText);
                 event.getRowValue().setEmail(event.getNewValue());
             } catch (SQLException e) {
-                // Operation Failed
+                // Operation Failed so we update the user with an error alert
                 alert(Alert.AlertType.ERROR, "Professor", "Email already exists");
                 int index = professors.indexOf(event.getRowValue());
                 if (index >= 0) {
@@ -108,6 +104,7 @@ public class AdminProfessorController extends BaseController {
         });
         columnPassword.setCellValueFactory(new PropertyValueFactory<>("password"));
         columnPassword.setOnEditCommit(event -> {
+        	// update the value of the password in the database when a change is made
             String queryText = String.format(
                     "UPDATE credentials SET password = '%s' WHERE (id = %d)",
                     event.getNewValue(), event.getRowValue().getCredentialID()
@@ -121,6 +118,7 @@ public class AdminProfessorController extends BaseController {
         });
         columnSubject.setCellValueFactory(new PropertyValueFactory<>("subject"));
         columnSubject.setOnEditCommit(event -> {
+        	// update the value of the subject in the database when a change is made
             try {
                 String queryText = String.format(
                         "UPDATE professor SET subject_id = %d WHERE (id = %d)",
@@ -129,7 +127,7 @@ public class AdminProfessorController extends BaseController {
                 executeQuery(connection, queryText);
                 event.getRowValue().setSubject(event.getNewValue());
             } catch (SQLException e) {
-                // Operation Failed, then we reload the row
+                // Operation Failed, then we reload the row and inform the user about the error with an alert dialog
                 alert(Alert.AlertType.ERROR, "Professor", "The subject is already taken by a different professor");
                 int index = professors.indexOf(event.getRowValue());
                 if (index >= 0) {
@@ -138,6 +136,7 @@ public class AdminProfessorController extends BaseController {
             }
         });
         try {
+        	// set the list of professors to the professor table
             professors = getProfessors();
             professorTable.setItems(professors);
 
@@ -153,7 +152,7 @@ public class AdminProfessorController extends BaseController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        if (type == 0) {
+        if (type == 0) {	// when type = 0 then we set up the interface for "View Information"
             optionTitle.setVisible(false);
             firstNameTitle.setVisible(false);
             lastNameTitle.setVisible(false);
@@ -170,7 +169,7 @@ public class AdminProfessorController extends BaseController {
             delete.setVisible(false);
             AnchorPane.setRightAnchor(professorTable, 10.0);
 
-        } else {
+        } else {	// when type = 1 then we set up the interface for "Add Information"
             columnFirstName.setCellFactory(TextFieldTableCell.forTableColumn());
             columnLastName.setCellFactory(TextFieldTableCell.forTableColumn());
             columnEmail.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -179,6 +178,10 @@ public class AdminProfessorController extends BaseController {
         }
     }
 
+    /**
+     * @return the list of all the professors in the database
+     * @throws SQLException
+     */
     private ObservableList<AdminProfessorModel> getProfessors() throws SQLException {
         String queryText = "SELECT professor.id, credentials_id, firstname, lastname, subject FROM professor INNER JOIN subject ON professor.subject_id = subject.id";
         ResultSet response = getResponse(connection, queryText);
@@ -195,6 +198,11 @@ public class AdminProfessorController extends BaseController {
         return professors;
     }
 
+    /**
+     * @param course 	the subject title
+     * @return 			the id of the given subject title
+     * @throws SQLException
+     */
     private int getSubjectId(String course) throws SQLException {
         String queryText = String.format("SELECT id FROM subject WHERE subject = '%s'", course);
         ResultSet response = getResponse(connection, queryText);
@@ -203,19 +211,12 @@ public class AdminProfessorController extends BaseController {
     }
 
     /**
-     * This method updates an item in an observable list
-     * @param list ObservableList item
-     * @param item Object in the ObservableList
+     * This adds a professor to the database: It first adds the professor email and password to
+     * the information table, then it add the professor details to the professor table.
      */
-    private void updateItem(ObservableList<AdminProfessorModel> list, AdminProfessorModel item) {
-        int index = list.indexOf(item);
-        if (index >= 0) {
-            list.set(index, item);
-        }
-    }
-
     @FXML
     void addUser() {
+    	// check that all the fields is not empty
         if (firstName.getText().isEmpty() | lastName.getText().isEmpty() | email.getText().isEmpty() | password.getText().isEmpty()) {
             alert(Alert.AlertType.ERROR, "Professor", "All fields are required");
             return;
@@ -257,6 +258,9 @@ public class AdminProfessorController extends BaseController {
         password.clear();
     }
 
+    /**
+     * This deletes a professor from the database
+     */
     @FXML
     void deleteUser() {
         int index = professorTable.getSelectionModel().getSelectedIndex();
