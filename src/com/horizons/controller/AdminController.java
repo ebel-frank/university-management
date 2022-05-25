@@ -1,6 +1,6 @@
 package com.horizons.controller;
 
-import com.horizons.ViewFactory;
+import com.horizons.FxmlMethods;
 import com.horizons.database.AppDatabase;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -17,10 +17,10 @@ import java.sql.SQLException;
 
 import static com.horizons.Utils.getResponse;
 
-public class AdminController extends BaseController{
+public class AdminController {
 
-    private final int type, adminId;
-    private final Connection connection;
+	private int adminId;
+    private Connection connection;
 
     @FXML
     private AnchorPane mainView, contentView;
@@ -35,26 +35,16 @@ public class AdminController extends BaseController{
     private ToggleGroup user;
 
     /**
-     * Constructor of the AdminController
-     * @param viewFactory	The ViewFactory object which will manage the layout
-     * @param fxmlName		The fxml name of the controller
-     * @param type			It tells our application to set up the interface of "View Information" or "Add Information"
-     * @param id			The administrator Id
+     * This method is used to set up the variables
+     * @param type	It tells our application to set up the interface of "View Information" or "Add Information"
+     * @param id	The administrator Id
      */
-    public AdminController(ViewFactory viewFactory, String fxmlName, int type, int id) {
-        super(viewFactory, fxmlName);
-        this.connection = AppDatabase.getConnection();
-        this.type = type;
+    public void setUpVariables(int type, int id) {
+    	this.connection = AppDatabase.getConnection();
         this.adminId = id;
-    }
-
-    /**
-     * This method is used to configure the variables
-     */
-    @FXML
-    public void initialize() {
+        
         try {
-            viewFactory.updateRoot(mainView, contentView, new AdminStudentController(viewFactory, "admin_student.fxml", type));
+            FxmlMethods.getInstance().updateRoot(mainView, contentView, "admin_student.fxml", type);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -71,13 +61,13 @@ public class AdminController extends BaseController{
         user.selectedToggleProperty().addListener((observableValue, oldToggle, newToggle) -> {
             // This block of code is executed any time the user clicks on a different radio button
         	try {
-                BaseController controller;
+                String fxmlName;
                 switch (((RadioButton) newToggle).getText()) {
-                    case "Students" -> controller = new AdminStudentController(viewFactory, "admin_student.fxml", type);
-                    case "Supervisors" -> controller = new AdminSupervisorController(viewFactory, "admin_supervisor.fxml", type);
-                    default -> controller = new AdminProfessorController(viewFactory, "admin_professor.fxml", type);
+                    case "Students" -> fxmlName = "admin_student.fxml";
+                    case "Supervisors" -> fxmlName = "admin_supervisor.fxml";
+                    default -> fxmlName = "admin_professor.fxml";
                 }
-                viewFactory.updateRoot(mainView, contentView, controller);
+                FxmlMethods.getInstance().updateRoot(mainView, contentView, fxmlName, type);
             } catch (IOException e) {
                 System.out.println(e.getMessage());
                 e.printStackTrace();
@@ -108,8 +98,9 @@ public class AdminController extends BaseController{
     @FXML
     void logout() {
         Stage stage = (Stage) profileMenu.getScene().getWindow();
-        viewFactory.closeStage(stage);
-        viewFactory.showLoginWindow();
+        FxmlMethods fxmlMethods = FxmlMethods.getInstance();
+        fxmlMethods.closeStage(stage);
+        fxmlMethods.showLoginWindow();
     }
 
     /**
@@ -118,7 +109,7 @@ public class AdminController extends BaseController{
     @FXML
     void goBack() {
         Stage stage = (Stage) profileMenu.getScene().getWindow();
-        viewFactory.goBack(stage);
+        FxmlMethods.getInstance().goBack(stage);
     }
 
 }

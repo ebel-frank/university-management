@@ -1,6 +1,5 @@
 package com.horizons.controller;
 
-import com.horizons.ViewFactory;
 import com.horizons.database.AppDatabase;
 import com.horizons.model.AdminStudentModel;
 import javafx.collections.FXCollections;
@@ -21,11 +20,10 @@ import java.util.Optional;
 
 import static com.horizons.Utils.*;
 
-public class AdminStudentController extends BaseController {
+public class AdminStudentController {
 
-    private final Connection connection;
+    private Connection connection;
     private ObservableList<AdminStudentModel> students;
-    private final int type;
 
     @FXML
     private Button add, delete;
@@ -52,22 +50,12 @@ public class AdminStudentController extends BaseController {
     private Tab year1, year2;
 
     /**
-     * Constructor of the AdminStudentController
-     * @param viewFactory	The ViewFactory object which will manage the layout
-     * @param fxmlName		The fxml name of this controller
-     * @param type			It tells our application to set up the interface of "View Information" or "Add Information"
+     * This method is used to set up the variables
+     * @param type	It tells our application to set up the interface of "View Information" or "Add Information"
      */
-    public AdminStudentController(ViewFactory viewFactory, String fxmlName, int type) {
-        super(viewFactory, fxmlName);
-        this.connection = AppDatabase.getConnection();
-        this.type = type;
-    }
-
-    /**
-     * This method is used to configure the variables
-     */
-    @FXML
-    void initialize() {
+    public void setUpVariables(int type) {
+    	this.connection = AppDatabase.getConnection();
+        
         preventColumnReordering(allYearsTable);
         if (type == 0) { 	// when type = 0 then we set up the interface for "View Information"
             optionTitle.setVisible(false);

@@ -1,11 +1,7 @@
 package com.horizons.controller;
 
-import com.horizons.ViewFactory;
 import com.horizons.database.AppDatabase;
 import com.horizons.model.AdminProfessorModel;
-import com.horizons.model.AdminStudentModel;
-import com.horizons.model.AdminSupervisorModel;
-import com.horizons.model.StudentModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -14,8 +10,6 @@ import javafx.scene.control.cell.ChoiceBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
-import javafx.util.converter.IntegerStringConverter;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,11 +21,10 @@ import java.util.Optional;
 import static com.horizons.Utils.*;
 import static com.horizons.Utils.alert;
 
-public class AdminProfessorController extends BaseController {
+public class AdminProfessorController {
 
-    private final Connection connection;
+    private Connection connection;
     private ObservableList<AdminProfessorModel> professors;
-    private final int type;
     private final List<String> subjects = new ArrayList<>();
 
     @FXML
@@ -53,23 +46,12 @@ public class AdminProfessorController extends BaseController {
     private ChoiceBox<String> subject;
 
     /**
-     * Constructor of the AdminProfessorController
-     * @param viewFactory	The ViewFactory object which will manage the layout
-     * @param fxmlName		The fxml name of this controller
-     * @param type			It tells our application to set up the interface of "View Information" or "Add Information"
+     * This method is used to configure the variables
+     * @param type	It tells our application to set up the interface of "View Information" or "Add Information"
      */
-    public AdminProfessorController(ViewFactory viewFactory, String fxmlName, int type) {
-        super(viewFactory, fxmlName);
-        this.connection = AppDatabase.getConnection();
-        this.type = type;
-    }
-
-    /**
-     * This method is used to configure the variables, JavaFx is responsible for
-     * calling this method
-     */
-    @FXML
-    void initialize() {
+    public void setUpVariables(int type) {
+    	this.connection = AppDatabase.getConnection();
+    	
     	// set up the professorTable and it's columns
         preventColumnReordering(professorTable);
         columnId.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -226,18 +208,6 @@ public class AdminProfessorController extends BaseController {
         ResultSet response = getResponse(connection, queryText);
         response.next();
         return response.getInt("id");
-    }
-
-    /**
-     * This method updates an item in an observable list
-     * @param list ObservableList item
-     * @param item Object in the ObservableList
-     */
-    private void updateItem(ObservableList<AdminProfessorModel> list, AdminProfessorModel item) {
-        int index = list.indexOf(item);
-        if (index >= 0) {
-            list.set(index, item);
-        }
     }
 
     /**

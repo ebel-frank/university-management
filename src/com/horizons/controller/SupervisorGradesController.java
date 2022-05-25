@@ -1,6 +1,5 @@
 package com.horizons.controller;
 
-import com.horizons.ViewFactory;
 import com.horizons.database.AppDatabase;
 import com.horizons.model.SupervisorGradesModel;
 import com.horizons.model.SupervisorModuleModel;
@@ -19,9 +18,9 @@ import java.sql.SQLException;
 
 import static com.horizons.Utils.*;
 
-public class SupervisorGradesController extends BaseController {
+public class SupervisorGradesController {
 
-    private final Connection connection;
+    private Connection connection;
 
     @FXML
     private ChoiceBox<String> year, specialty, semester, courses;
@@ -50,13 +49,9 @@ public class SupervisorGradesController extends BaseController {
     @FXML
     private Pane resultOptions;
 
-    public SupervisorGradesController(ViewFactory viewFactory, String fxmlName) {
-        super(viewFactory, fxmlName);
-        this.connection = AppDatabase.getConnection();
-    }
-
-    @FXML
-    void initialize() {
+    public void setUpVariables() {
+    	this.connection = AppDatabase.getConnection();
+    	
         year.getItems().addAll("1", "2");
         year.setOnAction(event -> {
             semester.getItems().clear();

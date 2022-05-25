@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="539.0" prefWidth="784.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="539.0" prefWidth="784.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.horizons.controller.StudentController">
     <AnchorPane layoutX="-1.0" layoutY="14.0" prefHeight="41.0" prefWidth="765.0" styleClass="pane" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <FontAwesomeIconView fx:id="profileIcon" glyphName="USER_CIRCLE" layoutX="760.0" layoutY="31.0" onMouseClicked="#showLogout" size="30" text="" AnchorPane.rightAnchor="32.0" />
         <Label fx:id="profileTitle" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="620.0" layoutY="11.0" onMouseClicked="#showLogout" prefHeight="20.0" prefWidth="132.0" text="David McVinci" textAlignment="RIGHT" AnchorPane.rightAnchor="70.0" AnchorPane.topAnchor="11.0">

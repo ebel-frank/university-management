@@ -6,9 +6,9 @@ import javafx.stage.Stage;
 public class Launcher extends Application {
     @Override
     public void start(Stage stage) {
-    	// create an instance of the ViewFactory class and show the login screen
-        ViewFactory viewFactory = new ViewFactory();
-        viewFactory.showLoginWindow();
+    	// get an instance of the FxmlMethods class and show the login screen
+        FxmlMethods fxmlMethods = FxmlMethods.getInstance();
+        fxmlMethods.showLoginWindow();
     }
 
     /**

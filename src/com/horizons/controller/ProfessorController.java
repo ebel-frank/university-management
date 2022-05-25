@@ -1,6 +1,6 @@
 package com.horizons.controller;
 
-import com.horizons.ViewFactory;
+import com.horizons.FxmlMethods;
 import com.horizons.database.AppDatabase;
 import com.horizons.model.StudentModel;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
@@ -19,11 +19,11 @@ import java.util.Set;
 
 import static com.horizons.Utils.*;
 
-public class ProfessorController extends BaseController {
+public class ProfessorController {
 
-    private final int type;
-    private final Connection connection;
-    private final int professorId;
+    private int type;
+    private Connection connection;
+    private int professorId;
     private int subjectId;
 
     private TreeItem<StudentModel> root;
@@ -61,19 +61,14 @@ public class ProfessorController extends BaseController {
     @FXML
     private MenuButton profileMenu;
 
-    public ProfessorController(ViewFactory viewFactory, String fxmlName, int type,
-            int id) {
-        super(viewFactory, fxmlName);
-        this.connection = AppDatabase.getConnection();
-        this.type = type;
-        this.professorId = id;
-    }
-
     /**
      * This method is used to configure the variables
      */
-    @FXML
-    public void initialize() {
+    public void setUpVariables(int type, int id) {
+    	this.connection = AppDatabase.getConnection();
+        this.professorId = id;
+        this.type = type;
+        
     	// set up the allYearsTable and it's columns
         preventColumnReordering(allYearsTable);
         allYearsTable.setRowFactory(getTreeTableViewRowFactory(allYearsTable));
@@ -407,8 +402,9 @@ public class ProfessorController extends BaseController {
     @FXML
     void logout() {
         Stage stage = (Stage) profileMenu.getScene().getWindow();
-        viewFactory.closeStage(stage);
-        viewFactory.showLoginWindow();
+        FxmlMethods fxmlMethods = FxmlMethods.getInstance();
+        fxmlMethods.closeStage(stage);
+        fxmlMethods.showLoginWindow();
     }
 
     /**
@@ -417,6 +413,6 @@ public class ProfessorController extends BaseController {
     @FXML
     void goBack() {
         Stage stage = (Stage) profileMenu.getScene().getWindow();
-        viewFactory.goBack(stage);
+        FxmlMethods.getInstance().goBack(stage);
     }
 }

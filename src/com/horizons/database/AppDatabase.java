@@ -18,8 +18,8 @@ public class AppDatabase {
     public static synchronized Connection getConnection() {
         if (databaseLink == null) {
             String databaseName = "schoolDatabase";
-            String databaseUser = "YOUR MYSQL CONNECTION USERNAME";
-            String databasePassword = "YOUR MYSQL CONNECTION PASSWORD";
+            String databaseUser = "root"/*"YOUR MYSQL CONNECTION USERNAME"*/;
+            String databasePassword = "phrank232k"/*"YOUR MYSQL CONNECTION PASSWORD"*/;
             String url = "jdbc:mysql://localhost:3306/" + databaseName + "?allowMultiQueries=true";
 
             try {

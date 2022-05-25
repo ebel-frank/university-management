@@ -1,6 +1,5 @@
 package com.horizons.controller;
 
-import com.horizons.ViewFactory;
 import com.horizons.database.AppDatabase;
 import com.horizons.model.AdminSupervisorModel;
 import javafx.collections.FXCollections;
@@ -19,12 +18,10 @@ import java.util.Optional;
 import static com.horizons.Utils.*;
 import static com.horizons.Utils.alert;
 
-public class AdminSupervisorController extends BaseController {
+public class AdminSupervisorController {
 
-    private final Connection connection;
+    private  Connection connection;
     private ObservableList<AdminSupervisorModel> supervisors;
-    private int id, credentialId;
-    private final int type;
 
     @FXML
     private Button add, delete;
@@ -42,19 +39,12 @@ public class AdminSupervisorController extends BaseController {
     private TextField firstName, lastName, email, password;
 
     /**
-     * Constructor of the AdminSupervisorController
-     * @param viewFactory	The ViewFactory object which will manage the layout
-     * @param fxmlName		The fxml name of this controller
-     * @param type			It tells our application to set up the interface of "View Information" or "Add Information"
+     * This method is used to set up the variables
+     * @param type	It tells our application to set up the interface of "View Information" or "Add Information"
      */
-    public AdminSupervisorController(ViewFactory viewFactory, String fxmlName, int type) {
-        super(viewFactory, fxmlName);
-        this.connection = AppDatabase.getConnection();
-        this.type = type;
-    }
-
-    @FXML
-    void initialize() {
+    public void setUpVariables(int type) {
+    	this.connection = AppDatabase.getConnection();
+    	
         preventColumnReordering(supervisorTable);
         if (type == 0) {	// when type = 0 then we set up the interface for "View Information"
             optionTitle.setVisible(false);

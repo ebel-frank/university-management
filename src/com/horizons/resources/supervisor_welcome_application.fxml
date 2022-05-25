@@ -10,7 +10,7 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="503.0" prefWidth="953.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="503.0" prefWidth="953.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.horizons.controller.SupervisorWelcomeController">
    <ImageView fitHeight="572.0" fitWidth="953.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <image>
          <Image url="@img_bg.jpg" />
@@ -22,7 +22,7 @@
          <String fx:value="login_pane" />
       </styleClass>
       <children>
-         <Button fx:id="option1" layoutX="52.0" layoutY="178.0" mnemonicParsing="false" onAction="#options" prefHeight="51.0" prefWidth="261.0" text="View Modules">
+         <Button fx:id="option1" layoutX="52.0" layoutY="178.0" mnemonicParsing="false" onAction="#options" prefHeight="51.0" prefWidth="261.0" text="Students">
             <font>
                <Font size="18.0" />
             </font>
@@ -31,7 +31,7 @@
                <String fx:value="curved_pane" />
             </styleClass>
          </Button>
-         <Button fx:id="option2" layoutX="52.0" layoutY="292.0" mnemonicParsing="false" onAction="#options" prefHeight="51.0" prefWidth="261.0" text="View Grades">
+         <Button fx:id="option2" layoutX="52.0" layoutY="292.0" mnemonicParsing="false" onAction="#options" prefHeight="51.0" prefWidth="261.0" text="Professors">
             <font>
                <Font size="18.0" />
             </font>

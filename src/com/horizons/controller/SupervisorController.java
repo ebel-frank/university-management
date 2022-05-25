@@ -1,6 +1,6 @@
 package com.horizons.controller;
 
-import com.horizons.ViewFactory;
+import com.horizons.FxmlMethods;
 import com.horizons.database.AppDatabase;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -17,10 +17,10 @@ import java.sql.SQLException;
 
 import static com.horizons.Utils.getResponse;
 
-public class SupervisorController extends BaseController {
+public class SupervisorController {
 
-    private final int type, supervisorId;
-    private final Connection connection;
+	private int supervisorId;
+    private Connection connection;
 
     @FXML
     private AnchorPane mainView, contentView;
@@ -37,19 +37,18 @@ public class SupervisorController extends BaseController {
     @FXML
     private ToggleGroup user;
 
-    public SupervisorController(ViewFactory viewFactory, String fxmlName,
-                                int type, int id) {
-        super(viewFactory, fxmlName);
-        this.connection = AppDatabase.getConnection();
-        this.type = type;
+    /**
+     * This method is used to set up the variables
+     * @param type	It tells our application to set up the interface of "Students" or "Professors"
+     * @param id	The supervisor Id
+     */
+    public void setUpVariables(int type, int id) {
+    	this.connection = AppDatabase.getConnection();
         this.supervisorId = id;
-    }
-
-    @FXML
-    public void initialize() {
+        
         if (type == 0) {
             try {
-                viewFactory.updateRoot(mainView, contentView, new SupervisorStudentController(viewFactory, "supervisor_student.fxml"));
+                FxmlMethods.getInstance().updateRoot(mainView, contentView, "supervisor_student.fxml", 0);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -58,13 +57,13 @@ public class SupervisorController extends BaseController {
             user.selectedToggleProperty().addListener((observableValue, oldToggle, newToggle) -> {
             	// This block of code is executed any time the user clicks on a different radio button
                 try {
-                    BaseController controller;
+                    String fxmlName;
                     if (((RadioButton) newToggle).getText().equals("All Students")) {
-                        controller = new SupervisorStudentController(viewFactory, "supervisor_student.fxml");
+                    	fxmlName = "supervisor_student.fxml";
                     } else {
-                        controller = new SupervisorGradesController(viewFactory, "supervisor_grades.fxml");
+                    	fxmlName = "supervisor_grades.fxml";
                     }
-                    viewFactory.updateRoot(mainView, contentView, controller);
+                    FxmlMethods.getInstance().updateRoot(mainView, contentView, fxmlName, 0);
                 } catch (IOException e) {
                     System.out.println(e.getMessage());
                     e.printStackTrace();
@@ -72,7 +71,7 @@ public class SupervisorController extends BaseController {
             });
         } else {
             try {
-                viewFactory.updateRoot(mainView, contentView, new SupervisorProfessorController(viewFactory, "supervisor_professor.fxml"));
+            	FxmlMethods.getInstance().updateRoot(mainView, contentView, "supervisor_professor.fxml", 0);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -112,8 +111,9 @@ public class SupervisorController extends BaseController {
     @FXML
     void logout() {
         Stage stage = (Stage) profileMenu.getScene().getWindow();
-        viewFactory.closeStage(stage);
-        viewFactory.showLoginWindow();
+        FxmlMethods fxmlMethods = FxmlMethods.getInstance();
+        fxmlMethods.closeStage(stage);
+        fxmlMethods.showLoginWindow();
     }
 
     /**
@@ -122,6 +122,6 @@ public class SupervisorController extends BaseController {
     @FXML
     void goBack() {
         Stage stage = (Stage) profileMenu.getScene().getWindow();
-        viewFactory.goBack(stage);
+        FxmlMethods.getInstance().goBack(stage);
     }
 }

@@ -1,7 +1,6 @@
 package com.horizons.controller;
 
 import com.horizons.Utils;
-import com.horizons.ViewFactory;
 import com.horizons.database.AppDatabase;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,7 +9,6 @@ import javafx.print.PrinterJob;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
 import org.controlsfx.control.spreadsheet.GridBase;
 import org.controlsfx.control.spreadsheet.SpreadsheetCell;
 import org.controlsfx.control.spreadsheet.SpreadsheetCellType;
@@ -20,12 +18,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class TranscriptController extends BaseController {
+public class TranscriptController {
 
-    private final Connection connection;
-    private final String fullname, specialty;
-    private final int year, studentId;
-    public Stage ownerStage;
+    private Connection connection;
+    private int year, studentId;
 
     @FXML
     private Label nameTitle, yearTitle, specialtyTitle;
@@ -38,24 +34,16 @@ public class TranscriptController extends BaseController {
 
     @FXML
     private ChoiceBox<String> semester;
-
-    public TranscriptController(ViewFactory viewFactory, String fxmlName, String fullname,
-                                int year, String specialty, int studentId, Stage ownerStage) {
-        super(viewFactory, fxmlName);
-        this.connection = AppDatabase.getConnection();
-        this.fullname = fullname;
-        this.year = year;
-        this.specialty = specialty;
-        this.studentId = studentId;
-        this.ownerStage = ownerStage;
-
-    }
+    
 
     /**
-     * This method is used to configure the variables
+     * This method is used to set up the variables
      */
-    @FXML
-    void initialize() {
+    public void setUpVariables(String fullname, int year, String specialty, int studentId) {
+    	this.connection = AppDatabase.getConnection();
+    	this.year = year;
+    	this.studentId = studentId;
+    	
     	// set the details of the student
         nameTitle.setText("Name: " + fullname);
         yearTitle.setText("Year: " + year);
@@ -167,6 +155,7 @@ public class TranscriptController extends BaseController {
                 total += resultSet.getDouble("total");
                 item.add(moduleGradeCell);
                 item.add(situationCell);
+                System.out.println("Row: "+row+" count: "+count);
                 row++;
                 count++;
                 rows.add(item);

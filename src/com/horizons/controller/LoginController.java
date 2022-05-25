@@ -1,6 +1,6 @@
 package com.horizons.controller;
 
-import com.horizons.ViewFactory;
+import com.horizons.FxmlMethods;
 import com.horizons.database.AppDatabase;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -11,20 +11,16 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-public class LoginController extends BaseController {
+public class LoginController {
 
     @FXML
     private Label errLabel;
     @FXML
     private TextField email, password;
-
-    /**
-     * Constructor of the LoginController
-     * @param viewFactory 	The ViewFactory object which will manage the layout
-     * @param fxmlName		The fxml name of the controller
-     */
-    public LoginController(ViewFactory viewFactory, String fxmlName) {
-        super(viewFactory, fxmlName);
+    
+    public void setUpVariables() {
+    	email.setText("josh");
+    	password.setText("12345");
     }
 
     /**
@@ -51,30 +47,21 @@ public class LoginController extends BaseController {
                     3: Administrator
                      */
                     int id = queryResult.getInt("id");
-                    int user = queryResult.getInt("user");
-                    String optionText1, optionText2;
-                    switch (user) {
+                    FxmlMethods fxmlMethods = FxmlMethods.getInstance();
+                    switch (queryResult.getInt("user")) {
                         case 0 -> {
-                            optionText1 = "Modules";
-                            optionText2 = "Grades";
+                            fxmlMethods.updateStage("student_welcome_application.fxml", (Stage) email.getScene().getWindow(), id);
                         }
                         case 1 -> {
-                            optionText1 = "Students";
-                            optionText2 = "Grades";
+                            fxmlMethods.updateStage("professor_welcome_application.fxml", (Stage) email.getScene().getWindow(), id);
                         }
                         case 2 -> {
-                            optionText1 = "Students";
-                            optionText2 = "Professors";
+                            fxmlMethods.updateStage("supervisor_welcome_application.fxml", (Stage) email.getScene().getWindow(), id);
                         }
                         default -> {
-                            optionText1 = "View Information";
-                            optionText2 = "Add Information";
+                            fxmlMethods.updateStage("admin_welcome_application.fxml", (Stage) email.getScene().getWindow(), id);
                         }
                     }
-                    BaseController controller = new WelcomeController(
-                            viewFactory, "welcome_application.fxml", id,
-                            user, optionText1, optionText2);
-                    viewFactory.updateStage(controller, (Stage) email.getScene().getWindow());
                 } else {
                     errLabel.setText("Invalid email and password");
                 }

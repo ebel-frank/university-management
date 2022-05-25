@@ -1,8 +1,6 @@
 package com.horizons.controller;
 
-import com.horizons.ViewFactory;
 import com.horizons.database.AppDatabase;
-import com.horizons.model.AdminStudentModel;
 import com.horizons.model.SupervisorStudentModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,9 +17,9 @@ import java.util.Objects;
 
 import static com.horizons.Utils.*;
 
-public class SupervisorStudentController extends BaseController {
+public class SupervisorStudentController {
 
-    private final Connection connection;
+    private Connection connection;
     private ObservableList<SupervisorStudentModel> students;
 
     @FXML
@@ -33,13 +31,10 @@ public class SupervisorStudentController extends BaseController {
     @FXML
     private TableColumn<?, Void> serialNo;
 
-    public SupervisorStudentController(ViewFactory viewFactory, String fxmlName) {
-        super(viewFactory, fxmlName);
-        this.connection = AppDatabase.getConnection();
-    }
 
-    @FXML
-    void initialize() {
+    public void setUpVariables() {
+    	this.connection = AppDatabase.getConnection();
+    	
     	// set up the allStudentTable and it's column
         preventColumnReordering(allStudentTable);
         serialNo.setCellFactory(indexCellFactory());

@@ -13,7 +13,7 @@
 
 <?import org.controlsfx.control.spreadsheet.SpreadsheetView?>
 
-<AnchorPane prefHeight="509.0" prefWidth="529.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="509.0" prefWidth="529.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.horizons.controller.TranscriptController">
    <AnchorPane fx:id="transcriptPane" prefHeight="457.0" prefWidth="529.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>
          <Label fx:id="specialtyTitle" layoutX="20.0" layoutY="151.0" prefHeight="17.0" prefWidth="50.0" text="Specialty: SIC" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">

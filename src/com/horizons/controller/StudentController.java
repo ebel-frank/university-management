@@ -1,6 +1,6 @@
 package com.horizons.controller;
 
-import com.horizons.ViewFactory;
+import com.horizons.FxmlMethods;
 import com.horizons.database.AppDatabase;
 import com.horizons.model.GradesModel;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
@@ -16,10 +16,9 @@ import java.sql.SQLException;
 import static com.horizons.Utils.getResponse;
 import static com.horizons.Utils.preventColumnReordering;
 
-public class StudentController extends BaseController {
+public class StudentController {
 
-    private final int type;
-    private final Connection connection;
+    private Connection connection;
     private int studentId;
     private int studentYear;
 
@@ -51,24 +50,14 @@ public class StudentController extends BaseController {
 
     @FXML
     private TreeTableColumn<GradesModel, String> columnSubject, columnExam, columnTp, columnCc, columnTotal;
-
+    
     /**
-     * Constructor of the StudentController
-     * @param viewFactory 	The ViewFactory object which will manage the layout
-     * @param fxmlName		The fxml name of this controller
-     * @param type			We use this to tell our application whether to set up interface of "Modules" or "Grades"
-     * @param id			The student id, which we will use to get the student details like his/her name, courses and grades
+     * @param type	We use this to tell our application whether to set up interface of "Modules" or "Grades"
+     * @param id	The student id, which we will use to get the student details like his/her name, courses and grades
      */
-    public StudentController(ViewFactory viewFactory, String fxmlName, int type,
-                             int id) {
-        super(viewFactory, fxmlName);
-        this.connection = AppDatabase.getConnection();
-        this.type = type;
+    public void setUpVariables(int type, int id) {
+    	this.connection = AppDatabase.getConnection();
         this.studentId = id;
-    }
-
-	@FXML
-    public void initialize() {
 		// set up the tableView and it's columns
         preventColumnReordering(tableView);
         studentTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
@@ -184,8 +173,9 @@ public class StudentController extends BaseController {
     @FXML
     void logout() {
         Stage stage = (Stage) profileMenu.getScene().getWindow();
-        viewFactory.closeStage(stage);
-        viewFactory.showLoginWindow();
+        FxmlMethods fxmlMethods = FxmlMethods.getInstance();
+        fxmlMethods.closeStage(stage);
+        fxmlMethods.showLoginWindow();
     }
 
     /**
@@ -194,7 +184,7 @@ public class StudentController extends BaseController {
     @FXML
     void goBack() {
         Stage stage = (Stage) profileMenu.getScene().getWindow();
-        viewFactory.goBack(stage);
+        FxmlMethods.getInstance().goBack(stage);
     }
     
     /**
@@ -202,10 +192,9 @@ public class StudentController extends BaseController {
      */
     @FXML
     void showTranscript() {
-        BaseController controller = new TranscriptController(
-                viewFactory, "transcript_application.fxml", title.getText(),
-                studentYear, specialty.getText().substring(11), studentId, (Stage) profileMenu.getScene().getWindow());
-        viewFactory.showTranscriptWindow(controller);
+        FxmlMethods.getInstance().showTranscriptWindow(
+        		"transcript_application.fxml", title.getText(), studentYear, specialty.getText().substring(11),
+        		studentId, (Stage) profileMenu.getScene().getWindow());
     }
 
 }
